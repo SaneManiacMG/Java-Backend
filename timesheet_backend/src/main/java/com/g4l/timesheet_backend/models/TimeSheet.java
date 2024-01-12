@@ -1,4 +1,4 @@
-package com.g4l.timesheet_backend.models.entities.logbook;
+package com.g4l.timesheet_backend.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
