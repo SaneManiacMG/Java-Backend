@@ -1,4 +1,4 @@
-package com.g4l.timesheet_backend.models.entities.user;
+package com.g4l.timesheet_backend.models.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ public class User {
     private String idNumber;
     private String firstName;
     private String lastName;
-    private String userId;
+    private String userName;
     private String email;
     private String phoneNumber;
 }
