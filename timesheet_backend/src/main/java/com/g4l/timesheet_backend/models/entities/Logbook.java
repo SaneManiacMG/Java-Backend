@@ -4,7 +4,10 @@ import com.g4l.timesheet_backend.models.enums.LogbookStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "logbooks")
 public class Logbook {
     @Id
     private String logbookId;
@@ -38,6 +42,7 @@ public class Logbook {
     private double sunday;
     @Column(name = "total_hours")
     private double totalHours;
+    @Enumerated(EnumType.STRING)
     @Column
     private LogbookStatus status;
     @Column(name = "status_description")
