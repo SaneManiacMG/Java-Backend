@@ -7,68 +7,70 @@ import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.ClientService;
 import com.g4l.timesheet_backend.models.entities.Client;
 import com.g4l.timesheet_backend.models.entities.ClientTeam;
+import com.g4l.timesheet_backend.repositories.ClientRepository;
+import com.g4l.timesheet_backend.repositories.ClientTeamRepository;
 
 @Service
 public class ClientServiceImpl implements ClientService {
 
+    private ClientRepository clientRepository;
+    private ClientTeamRepository clientTeamRepository;
+
+    public ClientServiceImpl(ClientRepository clientRepository, ClientTeamRepository clientTeamRepository) {
+        this.clientRepository = clientRepository;
+        this.clientTeamRepository = clientTeamRepository;
+    }
+
     @Override
     public Client createClient(Client client) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createClient'");
+        return clientRepository.save(client);
     }
 
     @Override
     public Client updateClient(Client client) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateClient'");
+        return clientRepository.save(client);
     }
 
     @Override
     public Client getClientById(String clientId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getClientById'");
+        return clientRepository.findById(clientId).orElse(null);
     }
 
     @Override
     public ClientTeam createClientTeam(ClientTeam clientTeam) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createClientTeam'");
+        return clientTeamRepository.save(clientTeam);
     }
 
     @Override
     public ClientTeam updateClientTeam(ClientTeam clientTeam) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateClientTeam'");
+        return clientTeamRepository.save(clientTeam);
     }
 
     @Override
     public ClientTeam getClientTeamById(String clientTeamId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getClientTeamById'");
+        return clientTeamRepository.findById(clientTeamId).orElse(null);
     }
 
     @Override
     public String deleteClient(String clientId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteClient'");
+        clientRepository.deleteById(clientId);
+        return "Client deleted";
     }
 
     @Override
     public String deleteClientTeam(String clientTeamId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteClientTeam'");
+        clientTeamRepository.deleteById(clientTeamId);
+        return "ClientTeam deleted";
     }
 
     @Override
     public List<ClientTeam> getAllClientTeams() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllClientTeams'");
+        return clientTeamRepository.findAll();
     }
 
     @Override
     public List<Client> getAllClients() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllClients'");
+        return clientRepository.findAll();
     }
     
 }

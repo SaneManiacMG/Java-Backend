@@ -5,51 +5,53 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.g4l.timesheet_backend.interfaces.ManagerService;
+import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
+import com.g4l.timesheet_backend.repositories.ManagerRepository;
 
 @Service
 public class ManagerServiceImpl implements ManagerService {
 
+    private ManagerRepository managerRepository;
+
+    public ManagerServiceImpl(ManagerRepository managerRepository) {
+        this.managerRepository = managerRepository;
+    }
+
     @Override
     public Manager createManager(Manager manager) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createManager'");
+        return managerRepository.save(manager);
     }
 
     @Override
     public Manager updateManager(Manager manager) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateManager'");
+        return managerRepository.save(manager);
     }
 
     @Override
     public Manager getManagerById(String managerId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getManagerById'");
+        return managerRepository.findById(managerId).orElse(null);
     }
 
     @Override
     public Manager getManagerByEmail(String email) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getManagerByEmail'");
+        return managerRepository.findByEmail(email);
     }
 
     @Override
     public String deleteManager(String managerId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteManager'");
+        managerRepository.deleteById(managerId);
+        return "Manager deleted";
     }
 
     @Override
     public List<Manager> getAllManagers() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllManagers'");
+        return managerRepository.findAll();
     }
 
     @Override
-    public List<Manager> getAllConsultantsByManagerId(String managerId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllConsultantsByManagerId'");
+    public List<Consultant> getAllConsultantsByManagerId(String managerId) {
+        return managerRepository.findConsultantsByManagerId(managerId);
     }
     
 }
