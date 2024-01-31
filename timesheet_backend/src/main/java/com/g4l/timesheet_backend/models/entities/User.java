@@ -1,5 +1,7 @@
 package com.g4l.timesheet_backend.models.entities;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,11 +9,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@MappedSuperclass
 public class User {
-    private String idNumber;
-    private String firstName;
-    private String lastName;
-    private String userName;
-    private String email;
-    private String phoneNumber;
+    @Column(name = "id_number")
+    String idNumber;
+    @Column(name = "first_name")
+    String firstName;
+    @Column(name = "last_name")
+    String lastName;
+    @Column(name="user_name")
+    String userName;
+    @Column
+    String email;
+    @Column(name = "phone_number")
+    String phoneNumber;
 }

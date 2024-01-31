@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,12 +21,19 @@ import lombok.NoArgsConstructor;
 @Table(name = "logbooks")
 public class Logbook {
     @Id
+    @Column(name = "logbook_id")
     private String logbookId;
-    @Column
-    private String consultantId;
-    @Column
-    private String managerId;
-    @Column
+    @ManyToOne
+    @JoinColumn(name = "consultant_id")
+    private Consultant consultant;
+    // @Column(name = "consultant_id")
+    // private String consultantId;
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    private Manager manager;
+    // @Column(name = "manager_id")
+    // private String managerId;
+    @Column(name = "week_number")
     private int weekNumber;
     @Column
     private double monday;
