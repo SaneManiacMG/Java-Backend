@@ -18,15 +18,15 @@ import lombok.Setter;
 public class Consultant extends User {
     @Id
     @Column(name = "consultant_id")
-    private String consultantId;
+    private String id;
     @OneToOne
     @JoinColumn(name = "manager_id")
     private Manager manager;
 
     public Consultant(String idNumber, String firstName, String lastName, String userName, String email,
-            String phoneNumber, String consultantId, Manager manager) {
+            String phoneNumber, String id, Manager manager) {
         super(idNumber, firstName, lastName, userName, email, phoneNumber);
-        this.consultantId = consultantId;
+        this.id = id;
         this.manager = manager;
     }
 }

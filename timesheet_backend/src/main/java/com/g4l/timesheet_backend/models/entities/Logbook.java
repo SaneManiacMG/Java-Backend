@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class Logbook {
     @Id
     @Column(name = "logbook_id")
-    private String logbookId;
+    private String id;
     @ManyToOne
     @JoinColumn(name = "consultant_id")
     private Consultant consultant;

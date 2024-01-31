@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class Client {
     @Id
     @Column(name = "client_id")
-    private String clientId;
+    private String id;
     @Column(name = "client_name")
     private String clientName;
     @OneToMany

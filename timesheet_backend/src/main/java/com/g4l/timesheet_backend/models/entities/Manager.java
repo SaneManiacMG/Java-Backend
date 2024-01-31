@@ -16,11 +16,11 @@ import lombok.Setter;
 public class Manager extends User {
     @Id
     @Column(name = "manager_id")
-    private String managerId;
+    private String id;
 
     public Manager(String idNumber, String firstName, String lastName, String userName, String email,
-            String phoneNumber, String managerId) {
+            String phoneNumber, String id) {
         super(idNumber, firstName, lastName, userName, email, phoneNumber);
-        this.managerId = managerId;
+        this.id = id;
     }
 }

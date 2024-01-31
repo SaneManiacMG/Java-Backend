@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class ClientTeam {
     @Id
     @Column(name = "team_id")
-    private String teamId;
+    private String id;
     @Column(name = "team_name")
     private String teamName;
     @OneToOne
