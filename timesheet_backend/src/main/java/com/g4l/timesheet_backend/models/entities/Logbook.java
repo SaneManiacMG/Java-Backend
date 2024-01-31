@@ -26,13 +26,9 @@ public class Logbook {
     @ManyToOne
     @JoinColumn(name = "consultant_id")
     private Consultant consultant;
-    // @Column(name = "consultant_id")
-    // private String consultantId;
     @ManyToOne
     @JoinColumn(name = "manager_id")
     private Manager manager;
-    // @Column(name = "manager_id")
-    // private String managerId;
     @Column(name = "week_number")
     private int weekNumber;
     @Column

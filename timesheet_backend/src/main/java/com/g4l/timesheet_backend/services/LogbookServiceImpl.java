@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.LogbookService;
 import com.g4l.timesheet_backend.models.entities.Logbook;
+import com.g4l.timesheet_backend.models.enums.LogbookStatus;
 import com.g4l.timesheet_backend.repositories.LogbookRepository;
 
 @Service
@@ -49,6 +50,14 @@ public class LogbookServiceImpl implements LogbookService {
     @Override
     public List<Logbook> getLogbooksByManagerId(String managerId) {
         return logbookRepository.findLogbookByManagerId(managerId);
+    }
+
+    @Override
+    public Logbook handleLogbookSubmission(String logbookId, String managerId, LogbookStatus status) {
+        return logbookRepository.findById(logbookId).map(logbook -> {
+            logbook.setStatus(status);
+            return logbookRepository.save(logbook);
+        }).orElse(null);
     }
     
 }
