@@ -51,7 +51,9 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public List<Consultant> getAllConsultantsByManagerId(String managerId) {
-        return managerRepository.findConsultantsByManagerId(managerId);
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAllConsultantsByManagerId'");
     }
+
     
 }
