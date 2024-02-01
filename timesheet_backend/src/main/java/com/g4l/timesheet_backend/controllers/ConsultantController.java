@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.g4l.timesheet_backend.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
+import com.g4l.timesheet_backend.models.requests.ConsultantRequest;
 
 @RestController
 @RequestMapping("/consultants")
@@ -24,12 +24,12 @@ public class ConsultantController {
     }
 
     @PostMapping("/createConsultant")
-    public Consultant createConsultant(Consultant consultant) {
+    public Consultant createConsultant(ConsultantRequest consultant) {
         return consultantService.createConsultant(consultant);
     }
 
     @PutMapping("/updateConsultant")
-    public Consultant updateConsultant(Consultant consultant) {
+    public Consultant updateConsultant(ConsultantRequest consultant) {
         return consultantService.updateConsultant(consultant);
     }
 

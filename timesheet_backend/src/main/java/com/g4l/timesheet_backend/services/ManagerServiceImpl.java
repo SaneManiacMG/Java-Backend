@@ -7,25 +7,29 @@ import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.ManagerService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
+import com.g4l.timesheet_backend.models.requests.ManagerRequest;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
+import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 
 @Service
 public class ManagerServiceImpl implements ManagerService {
 
     private ManagerRepository managerRepository;
+    private UserMapper userMapper;
 
-    public ManagerServiceImpl(ManagerRepository managerRepository) {
+    public ManagerServiceImpl(ManagerRepository managerRepository, UserMapper userMapper) {
         this.managerRepository = managerRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
-    public Manager createManager(Manager manager) {
-        return managerRepository.save(manager);
+    public Manager createManager(ManagerRequest managerRequest) {
+        return managerRepository.save(userMapper.userRequestToManager(managerRequest));
     }
 
     @Override
-    public Manager updateManager(Manager manager) {
-        return managerRepository.save(manager);
+    public Manager updateManager(ManagerRequest managerRequest) {
+        return managerRepository.save(userMapper.userRequestToManager(managerRequest));
     }
 
     @Override

@@ -6,25 +6,29 @@ import org.springframework.stereotype.Service;
 
 import com.g4l.timesheet_backend.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
+import com.g4l.timesheet_backend.models.requests.ConsultantRequest;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
+import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 
 @Service
 public class ConsultantServiceImpl implements ConsultantService {
 
     private ConsultantRepository consultantRepository;
+    private UserMapper userMapper;
 
-    public ConsultantServiceImpl(ConsultantRepository consultantRepository) {
+    public ConsultantServiceImpl(ConsultantRepository consultantRepository, UserMapper userMapper) {
         this.consultantRepository = consultantRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
-    public Consultant createConsultant(Consultant consultant) {
-        return consultantRepository.save(consultant);
+    public Consultant createConsultant(ConsultantRequest consultant) {
+        return consultantRepository.save(userMapper.userRequestToConsultant(consultant));
     }
 
     @Override
-    public Consultant updateConsultant(Consultant consultant) {
-        return consultantRepository.save(consultant);
+    public Consultant updateConsultant(ConsultantRequest consultant) {
+        return consultantRepository.save(userMapper.userRequestToConsultant(consultant));
     }
 
     @Override

@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.g4l.timesheet_backend.interfaces.ManagerService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
+import com.g4l.timesheet_backend.models.requests.ManagerRequest;
 
 @RestController
 @RequestMapping("/managers")
@@ -25,13 +25,13 @@ public class ManagerController {
     }
 
     @PostMapping("/createManager")
-    public Manager createManager(Manager manager) {
-        return managerService.createManager(manager);
+    public Manager createManager(ManagerRequest managerRequest) {
+        return managerService.createManager(managerRequest);
     }
 
     @PutMapping("/updateManager")
-    public Manager updateManager(Manager manager) {
-        return managerService.updateManager(manager);
+    public Manager updateManager(ManagerRequest managerRequest) {
+        return managerService.updateManager(managerRequest);
     }
 
     @GetMapping("/getManagerById")

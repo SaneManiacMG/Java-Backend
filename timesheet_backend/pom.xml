@@ -66,6 +66,13 @@
 			<artifactId>spring-cloud-starter-config</artifactId>
 			<version>4.1.0</version>
 		</dependency>
+		
+		<!--model mapper-->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.2.0</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
