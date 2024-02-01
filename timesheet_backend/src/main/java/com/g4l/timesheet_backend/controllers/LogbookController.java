@@ -5,11 +5,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.g4l.timesheet_backend.interfaces.LogbookService;
 import com.g4l.timesheet_backend.models.entities.Logbook;
+import com.g4l.timesheet_backend.models.enums.LogbookStatus;
 import java.util.List;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,5 +56,10 @@ public class LogbookController {
     @DeleteMapping("/deleteLogbook/{logbookId}")
     public String deleteLogbook(@PathVariable String logbookId) {
         return logbookService.deleteLogbook(logbookId);
+    }
+
+    @PutMapping("/handleLogbookSubmission/{logbookId}/{managerId}/{status}")
+    public Logbook handleLogbookSubmission(@PathVariable String logbookId, @PathVariable String managerId, @PathVariable LogbookStatus status) {
+        return logbookService.handleLogbookSubmission(logbookId, managerId, status);
     }
 }
