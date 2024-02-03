@@ -1,7 +1,6 @@
 package com.g4l.timesheet_backend.models.entities;
 
 import com.g4l.timesheet_backend.models.enums.LogbookStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

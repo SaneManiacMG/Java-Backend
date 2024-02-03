@@ -9,7 +9,6 @@ import com.g4l.timesheet_backend.interfaces.LogbookService;
 import com.g4l.timesheet_backend.models.requests.LogbookHandleRequest;
 import com.g4l.timesheet_backend.models.requests.LogbookSubmissionRequest;
 import com.g4l.timesheet_backend.models.responses.LogbookResponse;
-
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

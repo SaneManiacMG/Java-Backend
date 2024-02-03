@@ -1,18 +1,19 @@
 package com.g4l.timesheet_backend.controllers;
 
 import java.util.List;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.g4l.timesheet_backend.interfaces.ClientService;
-import com.g4l.timesheet_backend.models.entities.Client;
+import com.g4l.timesheet_backend.models.requests.ClientRequest;
 import com.g4l.timesheet_backend.models.requests.ClientTeamRequest;
+import com.g4l.timesheet_backend.models.responses.ClientResponse;
 import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 @RequestMapping("/clients")
@@ -26,22 +27,22 @@ public class ClientController {
     }
 
     @PostMapping("/createClient")
-    public Client createClient(Client client) {
-        return clientService.createClient(client);
+    public ClientResponse createClient(ClientRequest clientRequest) {
+        return clientService.createClient(clientRequest);
     }
     
     @PutMapping("/updateClient")
-    public Client updateClient(Client client) {
-        return clientService.updateClient(client);
+    public ClientResponse updateClient(ClientRequest clientRequest) {
+        return clientService.updateClient(clientRequest);
     }
 
     @GetMapping
-    public List<Client> getAllClients() {
+    public List<ClientResponse> getAllClients() {
         return clientService.getAllClients();
     }
 
     @GetMapping("/getClientById")
-    public Client getClientById(String clientId) {
+    public ClientResponse getClientById(String clientId) {
         return clientService.getClientById(clientId);
     }
 
@@ -51,12 +52,12 @@ public class ClientController {
     }
 
     @PostMapping("/createClientTeam")
-    public ClientTeamResponse createClientTeam(ClientTeamRequest clientTeam) {
+    public ClientTeamResponse createClientTeam(@RequestBody ClientTeamRequest clientTeam) {
         return clientService.createClientTeam(clientTeam);
     }
 
     @PutMapping("/updateClientTeam")
-    public ClientTeamResponse updateClientTeam(ClientTeamRequest clientTeam) {
+    public ClientTeamResponse updateClientTeam(@RequestBody ClientTeamRequest clientTeam) {
         return clientService.updateClientTeam(clientTeam);
     }
 

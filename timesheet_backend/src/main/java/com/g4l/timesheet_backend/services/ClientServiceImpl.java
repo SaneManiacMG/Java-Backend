@@ -1,13 +1,13 @@
 package com.g4l.timesheet_backend.services;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import com.g4l.timesheet_backend.interfaces.ClientService;
 import com.g4l.timesheet_backend.models.entities.Client;
 import com.g4l.timesheet_backend.models.entities.ClientTeam;
+import com.g4l.timesheet_backend.models.requests.ClientRequest;
 import com.g4l.timesheet_backend.models.requests.ClientTeamRequest;
+import com.g4l.timesheet_backend.models.responses.ClientResponse;
 import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 import com.g4l.timesheet_backend.repositories.ClientRepository;
 import com.g4l.timesheet_backend.repositories.ClientTeamRepository;
@@ -28,18 +28,21 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client createClient(Client client) {
-        return clientRepository.save(client);
+    public ClientResponse createClient(ClientRequest clientRequest) {
+        Client client = clientRepository.save(clientMapper.clientRequestToClient(clientRequest));
+        return clientMapper.clientToClientResponse(client);
     }
 
     @Override
-    public Client updateClient(Client client) {
-        return clientRepository.save(client);
+    public ClientResponse updateClient(ClientRequest clientRequest) {
+        Client client = clientRepository.save(clientMapper.clientRequestToClient(clientRequest));
+        return clientMapper.clientToClientResponse(client);
     }
 
     @Override
-    public Client getClientById(String clientId) {
-        return clientRepository.findById(clientId).orElse(null);
+    public ClientResponse getClientById(String clientId) {
+        Client client = clientRepository.findById(clientId).orElse(null);
+        return clientMapper.clientToClientResponse(client);
     }
 
     @Override
@@ -84,8 +87,14 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<Client> getAllClients() {
-        return clientRepository.findAll();
+    public List<ClientResponse> getAllClients() {
+        List<Client> clients = clientRepository.findAll();
+        List<ClientResponse> clientResponses = null;
+        for (Client client : clients) {
+            clientResponses.add(clientMapper.clientToClientResponse(client));
+        }
+
+        return clientResponses;
     }
     
 }

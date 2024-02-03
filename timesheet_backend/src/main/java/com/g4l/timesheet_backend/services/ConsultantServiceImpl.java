@@ -1,9 +1,7 @@
 package com.g4l.timesheet_backend.services;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import com.g4l.timesheet_backend.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.requests.ConsultantRequest;
