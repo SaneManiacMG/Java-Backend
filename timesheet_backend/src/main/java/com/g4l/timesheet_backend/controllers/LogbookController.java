@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.g4l.timesheet_backend.interfaces.LogbookService;
-import com.g4l.timesheet_backend.models.entities.Logbook;
-import com.g4l.timesheet_backend.models.enums.LogbookStatus;
+import com.g4l.timesheet_backend.models.requests.LogbookHandleRequest;
+import com.g4l.timesheet_backend.models.requests.LogbookSubmissionRequest;
+import com.g4l.timesheet_backend.models.responses.LogbookResponse;
+
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,33 +25,33 @@ public class LogbookController {
     }
 
     @PostMapping("/createLogbook")
-    public Logbook createLogbook(@RequestBody Logbook logbook) {
+    public LogbookResponse createLogbook(@RequestBody LogbookSubmissionRequest logbook) {
         System.out.println(logbook.toString());
         return logbookService.createLogbook(logbook);
     }
 
     @GetMapping("/getLogbook/{logbookId}")
-    public Logbook getLogbookById(@PathVariable String logbookId) {
+    public LogbookResponse getLogbookById(@PathVariable String logbookId) {
         return logbookService.getLogbookById(logbookId);
     }
 
     @GetMapping("/getLogbooksByConsultantId/{consultantId}")
-    public List<Logbook> getLogbooksByConsultantId(@PathVariable String consultantId) {
+    public List<LogbookResponse> getLogbooksByConsultantId(@PathVariable String consultantId) {
         return logbookService.getLogbooksByConsultantId(consultantId);
     }
 
     @GetMapping("/getLogbooksByManagerId/{managerId}")
-    public List<Logbook> getLogbooksByManagerId(@PathVariable String managerId) {
+    public List<LogbookResponse> getLogbooksByManagerId(@PathVariable String managerId) {
         return logbookService.getLogbooksByManagerId(managerId);
     }
 
     @PutMapping("/updateLogbook")
-    public Logbook updateLogbook(@RequestBody Logbook logbook) {
-        return logbookService.updateLogbook(logbook);
+    public LogbookResponse updateLogbook(@RequestBody LogbookSubmissionRequest logbookRequest) {
+        return logbookService.updateLogbook(logbookRequest);
     }
 
     @GetMapping("/getAllLogbooks")
-    public List<Logbook> getAllLogbooks() {
+    public List<LogbookResponse> getAllLogbooks() {
         return logbookService.getAllLogbooks();
     }
 
@@ -58,8 +60,8 @@ public class LogbookController {
         return logbookService.deleteLogbook(logbookId);
     }
 
-    @PutMapping("/handleLogbookSubmission/{logbookId}/{managerId}/{status}")
-    public Logbook handleLogbookSubmission(@PathVariable String logbookId, @PathVariable String managerId, @PathVariable LogbookStatus status) {
-        return logbookService.handleLogbookSubmission(logbookId, managerId, status);
+    @PutMapping("/handleLogbookSubmission")
+    public LogbookResponse handleLogbookSubmission(@RequestBody LogbookHandleRequest logbookHandleRequest) {
+        return logbookService.handleLogbookSubmission(logbookHandleRequest);
     }
 }

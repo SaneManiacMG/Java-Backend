@@ -1,17 +1,17 @@
 package com.g4l.timesheet_backend.interfaces;
 
 import java.util.List;
-
-import com.g4l.timesheet_backend.models.entities.Logbook;
-import com.g4l.timesheet_backend.models.enums.LogbookStatus;
+import com.g4l.timesheet_backend.models.requests.LogbookHandleRequest;
+import com.g4l.timesheet_backend.models.requests.LogbookSubmissionRequest;
+import com.g4l.timesheet_backend.models.responses.LogbookResponse;
 
 public interface LogbookService {
-    public Logbook createLogbook(Logbook logbook);
-    public Logbook updateLogbook(Logbook logbook);
-    public Logbook getLogbookById(String logbookId);
-    public List<Logbook> getLogbooksByConsultantId(String consultantId);
-    public List<Logbook> getLogbooksByManagerId(String managerId);
-    public List<Logbook> getAllLogbooks();
+    public LogbookResponse createLogbook(LogbookSubmissionRequest logbookSubmission);
+    public LogbookResponse updateLogbook(LogbookSubmissionRequest logbookSubmission);
+    public LogbookResponse getLogbookById(String logbookId);
+    public List<LogbookResponse> getLogbooksByConsultantId(String consultantId);
+    public List<LogbookResponse> getLogbooksByManagerId(String managerId);
+    public List<LogbookResponse> getAllLogbooks();
     public String deleteLogbook(String logbookId);
-    public Logbook handleLogbookSubmission(String logbookId, String managerId, LogbookStatus status);
+    public LogbookResponse handleLogbookSubmission(LogbookHandleRequest logbookHandleRequest);
 }

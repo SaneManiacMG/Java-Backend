@@ -8,6 +8,7 @@ import com.g4l.timesheet_backend.interfaces.ManagerService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.requests.ManagerRequest;
+import com.g4l.timesheet_backend.models.responses.ManagerResponse;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 
@@ -23,23 +24,27 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Manager createManager(ManagerRequest managerRequest) {
-        return managerRepository.save(userMapper.userRequestToManager(managerRequest));
+    public ManagerResponse createManager(ManagerRequest managerRequest) {
+        Manager manager = managerRepository.save(userMapper.userRequestToManager(managerRequest));
+        return userMapper.managerToUserResponse(manager);
     }
 
     @Override
-    public Manager updateManager(ManagerRequest managerRequest) {
-        return managerRepository.save(userMapper.userRequestToManager(managerRequest));
+    public ManagerResponse updateManager(ManagerRequest managerRequest) {
+        Manager manager = managerRepository.save(userMapper.userRequestToManager(managerRequest));
+        return userMapper.managerToUserResponse(manager);
     }
 
     @Override
-    public Manager getManagerById(String managerId) {
-        return managerRepository.findById(managerId).orElse(null);
+    public ManagerResponse getManagerById(String managerId) {
+        Manager manager =  managerRepository.findById(managerId).orElse(null);
+        return userMapper.managerToUserResponse(manager);
     }
 
     @Override
-    public Manager getManagerByEmail(String email) {
-        return managerRepository.findByEmail(email);
+    public ManagerResponse getManagerByEmail(String email) {
+        Manager manager =  managerRepository.findByEmail(email);
+        return userMapper.managerToUserResponse(manager);
     }
 
     @Override
@@ -49,8 +54,14 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public List<Manager> getAllManagers() {
-        return managerRepository.findAll();
+    public List<ManagerResponse> getAllManagers() {
+        List<Manager> managers = managerRepository.findAll();
+        List<ManagerResponse> managerResponses = null;
+        for (Manager manager: managers) {
+            managerResponses.add(userMapper.managerToUserResponse(manager));
+        }
+
+        return managerResponses;
     }
 
     @Override

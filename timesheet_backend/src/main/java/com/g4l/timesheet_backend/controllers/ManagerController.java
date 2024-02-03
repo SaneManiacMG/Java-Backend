@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.g4l.timesheet_backend.interfaces.ManagerService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
-import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.requests.ManagerRequest;
+import com.g4l.timesheet_backend.models.responses.ManagerResponse;
 
 @RestController
 @RequestMapping("/managers")
@@ -25,22 +25,22 @@ public class ManagerController {
     }
 
     @PostMapping("/createManager")
-    public Manager createManager(ManagerRequest managerRequest) {
+    public ManagerResponse createManager(ManagerRequest managerRequest) {
         return managerService.createManager(managerRequest);
     }
 
     @PutMapping("/updateManager")
-    public Manager updateManager(ManagerRequest managerRequest) {
+    public ManagerResponse updateManager(ManagerRequest managerRequest) {
         return managerService.updateManager(managerRequest);
     }
 
     @GetMapping("/getManagerById")
-    public Manager getManagerById(String managerId) {
+    public ManagerResponse getManagerById(String managerId) {
         return managerService.getManagerById(managerId);
     }
 
     @GetMapping("/getManagerByEmail")
-    public Manager getManagerByEmail(String email) {
+    public ManagerResponse getManagerByEmail(String email) {
         return managerService.getManagerByEmail(email);
     }
 
@@ -50,7 +50,7 @@ public class ManagerController {
     }
 
     @GetMapping("/getAllManagers")
-    public List<Manager> getAllManagers() {
+    public List<ManagerResponse> getAllManagers() {
         return managerService.getAllManagers();
     }
 

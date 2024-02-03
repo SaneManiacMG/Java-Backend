@@ -4,36 +4,49 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.LogbookService;
 import com.g4l.timesheet_backend.models.entities.Logbook;
-import com.g4l.timesheet_backend.models.enums.LogbookStatus;
+import com.g4l.timesheet_backend.models.requests.LogbookHandleRequest;
+import com.g4l.timesheet_backend.models.requests.LogbookSubmissionRequest;
+import com.g4l.timesheet_backend.models.responses.LogbookResponse;
 import com.g4l.timesheet_backend.repositories.LogbookRepository;
+import com.g4l.timesheet_backend.utils.mappers.models.LogbookMapper;
 
 @Service
 public class LogbookServiceImpl implements LogbookService {
     private LogbookRepository logbookRepository;
+    private LogbookMapper logbookMapper;
 
-    public LogbookServiceImpl(LogbookRepository logbookRepository) {
+    public LogbookServiceImpl(LogbookRepository logbookRepository, LogbookMapper logbookMapper) {
         this.logbookRepository = logbookRepository;
-        
+        this.logbookMapper = logbookMapper;
     }
 
     @Override
-    public Logbook createLogbook(Logbook logbook) {
-        return logbookRepository.save(logbook);
+    public LogbookResponse createLogbook(LogbookSubmissionRequest logbookSubmission) {
+        Logbook logbook = logbookRepository.save(logbookMapper.logbookSubmissionRequestToLogbook(logbookSubmission));
+        return logbookMapper.logbookToLogbookResponse(logbook);
     }
 
     @Override
-    public Logbook updateLogbook(Logbook logbook) {
-        return logbookRepository.save(logbook);
+    public LogbookResponse updateLogbook(LogbookSubmissionRequest logbookSubmission) {
+        Logbook logbook = logbookRepository.save(logbookMapper.logbookSubmissionRequestToLogbook(logbookSubmission));
+        return logbookMapper.logbookToLogbookResponse(logbook);
     }
 
     @Override
-    public Logbook getLogbookById(String logbookId) {
-        return logbookRepository.findById(logbookId).orElse(null);
+    public LogbookResponse getLogbookById(String logbookId) {
+        Logbook logbook =  logbookRepository.findById(logbookId).orElse(null);
+        return logbookMapper.logbookToLogbookResponse(logbook);
     }
 
     @Override
-    public List<Logbook> getAllLogbooks() {
-        return logbookRepository.findAll();
+    public List<LogbookResponse> getAllLogbooks() {
+        List<Logbook> logbooks = logbookRepository.findAll();
+        List<LogbookResponse> logbookResponses = null;
+
+        for (Logbook logbook : logbooks) {
+            logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
+        }
+        return logbookResponses;
     }
 
     @Override
@@ -43,21 +56,32 @@ public class LogbookServiceImpl implements LogbookService {
     }
 
     @Override
-    public List<Logbook> getLogbooksByConsultantId(String consultantId) {
-        return logbookRepository.findLogbookByConsultantId(consultantId);
+    public List<LogbookResponse> getLogbooksByConsultantId(String consultantId) {
+        List<Logbook> logbooks = logbookRepository.findLogbookByConsultantId(consultantId);
+        List<LogbookResponse> logbookResponses = null;
+        for (Logbook logbook : logbooks) {
+            logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
+        }
+
+        return logbookResponses;
     }
 
     @Override
-    public List<Logbook> getLogbooksByManagerId(String managerId) {
-        return logbookRepository.findLogbookByManagerId(managerId);
+    public List<LogbookResponse> getLogbooksByManagerId(String managerId) {
+        List<Logbook> logbooks = logbookRepository.findLogbookByManagerId(managerId);
+        List<LogbookResponse> logbookResponses = null;
+        for (Logbook logbook : logbooks) {
+            logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
+        }
+
+        return logbookResponses;
     }
 
     @Override
-    public Logbook handleLogbookSubmission(String logbookId, String managerId, LogbookStatus status) {
-        return logbookRepository.findById(logbookId).map(logbook -> {
-            logbook.setStatus(status);
-            return logbookRepository.save(logbook);
-        }).orElse(null);
+    public LogbookResponse handleLogbookSubmission(LogbookHandleRequest logbookHandleRequest) {
+        Logbook logbook = logbookRepository.findById(logbookHandleRequest.logbookId).orElse(null);
+
+        return logbookMapper.logbookToLogbookResponse(logbook);
     }
     
 }

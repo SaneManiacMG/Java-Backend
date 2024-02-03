@@ -13,5 +13,5 @@ import lombok.Setter;
 @Getter
 public class ManagerRequest extends User {
     String clientTeamId;
-    String managerId;
+    String id;
 }
