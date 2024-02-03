@@ -8,7 +8,9 @@ import com.g4l.timesheet_backend.interfaces.ManagerService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.requests.ManagerRequest;
+import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
 import com.g4l.timesheet_backend.models.responses.ManagerResponse;
+import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 
@@ -16,11 +18,14 @@ import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 public class ManagerServiceImpl implements ManagerService {
 
     private ManagerRepository managerRepository;
+    private ConsultantRepository consultantRepository;
     private UserMapper userMapper;
 
-    public ManagerServiceImpl(ManagerRepository managerRepository, UserMapper userMapper) {
+    public ManagerServiceImpl(ManagerRepository managerRepository, UserMapper userMapper, 
+        ConsultantRepository consultantRepository) {
         this.managerRepository = managerRepository;
         this.userMapper = userMapper;
+        this.consultantRepository = consultantRepository;
     }
 
     @Override
@@ -65,9 +70,14 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public List<Consultant> getAllConsultantsByManagerId(String managerId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllConsultantsByManagerId'");
+    public List<ConsultantResponse> getAllConsultantsByManagerId(String managerId) {
+        List<Consultant> consultants = consultantRepository.findConsultantsByManagerId(managerId);
+        List<ConsultantResponse> consultantResponses = null;
+        for (Consultant consultant: consultants) {
+            consultantResponses.add(userMapper.consultantToUserResponse(consultant));
+        }
+
+        return consultantResponses;
     }
 
     

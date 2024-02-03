@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.g4l.timesheet_backend.interfaces.ManagerService;
-import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.requests.ManagerRequest;
+import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
 import com.g4l.timesheet_backend.models.responses.ManagerResponse;
 
 @RestController
@@ -55,7 +55,7 @@ public class ManagerController {
     }
 
     @GetMapping("/getAllConsultantsByManagerId")
-    public List<Consultant> getAllConsultantsByManagerId(String managerId) {
+    public List<ConsultantResponse> getAllConsultantsByManagerId(String managerId) {
         return managerService.getAllConsultantsByManagerId(managerId);
     }
 }
