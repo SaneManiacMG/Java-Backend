@@ -2,8 +2,9 @@ package com.g4l.timesheet_backend.utils.mappers.models;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import com.g4l.timesheet_backend.models.entities.Client;
+import com.g4l.timesheet_backend.models.entities.ClientTeam;
+import com.g4l.timesheet_backend.models.requests.ClientTeamRequest;
+import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 
 @Service
 public class ClientMapper {
@@ -13,7 +14,11 @@ public class ClientMapper {
         this.modelMapper = modelMapper;
     }
 
-    public Client clientSubmissionRequestToClient(Client clientSubmissionRequest) {
-        return modelMapper.map(clientSubmissionRequest, Client.class);
+    public ClientTeam clientTeamRequestToClient(ClientTeamRequest clientTeamRequest) {
+        return modelMapper.map(clientTeamRequest, ClientTeam.class);
+    }
+
+    public ClientTeamResponse clientTeamResponse(ClientTeam clientTeam) {
+        return modelMapper.map(clientTeam, ClientTeamResponse.class);
     }
 }

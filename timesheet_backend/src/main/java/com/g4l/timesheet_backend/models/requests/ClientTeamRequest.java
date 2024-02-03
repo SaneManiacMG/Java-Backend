@@ -1,7 +1,15 @@
 package com.g4l.timesheet_backend.models.requests;
 
-public class ClientTeamRequest {
-    public String clientId;
-    public String id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class ClientTeamRequest {
+    public String id;
+    public String teamName;
+    public String clientId;
+    public String managerId;
 }

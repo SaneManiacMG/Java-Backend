@@ -1,15 +1,6 @@
 package com.g4l.timesheet_backend.models.responses;
 
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.g4l.timesheet_backend.models.requests.ClientTeamRequest;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class ClientTeamResponse {
-    public String id;
-    public String clientName;
-    public List<String> clientTeams;
+public class ClientTeamResponse extends ClientTeamRequest {
 }

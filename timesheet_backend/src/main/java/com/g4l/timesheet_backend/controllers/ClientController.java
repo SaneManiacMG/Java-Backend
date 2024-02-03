@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.g4l.timesheet_backend.interfaces.ClientService;
 import com.g4l.timesheet_backend.models.entities.Client;
-import com.g4l.timesheet_backend.models.entities.ClientTeam;
+import com.g4l.timesheet_backend.models.requests.ClientTeamRequest;
+import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 
 @RestController
 @RequestMapping("/clients")
@@ -50,22 +51,22 @@ public class ClientController {
     }
 
     @PostMapping("/createClientTeam")
-    public ClientTeam createClientTeam(ClientTeam clientTeam) {
+    public ClientTeamResponse createClientTeam(ClientTeamRequest clientTeam) {
         return clientService.createClientTeam(clientTeam);
     }
 
     @PutMapping("/updateClientTeam")
-    public ClientTeam updateClientTeam(ClientTeam clientTeam) {
+    public ClientTeamResponse updateClientTeam(ClientTeamRequest clientTeam) {
         return clientService.updateClientTeam(clientTeam);
     }
 
     @GetMapping("/getAllClientTeams")
-    public List<ClientTeam> getAllClientTeams() {
+    public List<ClientTeamResponse> getAllClientTeams() {
         return clientService.getAllClientTeams();
     }
 
     @GetMapping("/getClientTeamById")
-    public ClientTeam getClientTeamById(String clientTeamId) {
+    public ClientTeamResponse getClientTeamById(String clientTeamId) {
         return clientService.getClientTeamById(clientTeamId);
     }
 
