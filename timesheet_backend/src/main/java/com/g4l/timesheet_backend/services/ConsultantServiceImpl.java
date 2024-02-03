@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.requests.ConsultantRequest;
+import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 
@@ -22,23 +23,27 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     @Override
-    public Consultant createConsultant(ConsultantRequest consultant) {
-        return consultantRepository.save(userMapper.userRequestToConsultant(consultant));
+    public ConsultantResponse createConsultant(ConsultantRequest consultantRequest) {
+        Consultant consultant = consultantRepository.save(userMapper.userRequestToConsultant(consultantRequest));
+        return userMapper.consultantToUserResponse(consultant);
     }
 
     @Override
-    public Consultant updateConsultant(ConsultantRequest consultant) {
-        return consultantRepository.save(userMapper.userRequestToConsultant(consultant));
+    public ConsultantResponse updateConsultant(ConsultantRequest consultantRequest) {
+        Consultant consultant =  consultantRepository.save(userMapper.userRequestToConsultant(consultantRequest));
+        return userMapper.consultantToUserResponse(consultant);
     }
 
     @Override
-    public Consultant getConsultantById(String consultantId) {
-        return consultantRepository.findById(consultantId).orElse(null);
+    public ConsultantResponse getConsultantById(String consultantId) {
+        Consultant consultant =  consultantRepository.findById(consultantId).orElse(null);
+        return userMapper.consultantToUserResponse(consultant);
     }
 
     @Override
-    public Consultant getConsultantByEmail(String email) {
-        return consultantRepository.findByEmail(email);
+    public ConsultantResponse getConsultantByEmail(String email) {
+        Consultant consultant = consultantRepository.findByEmail(email);
+        return userMapper.consultantToUserResponse(consultant);
     }
 
     @Override
@@ -48,8 +53,14 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     @Override
-    public List<Consultant> getAllConsultants() {
-        return consultantRepository.findAll();
+    public List<ConsultantResponse> getAllConsultants() {
+        List<Consultant> consultants = consultantRepository.findAll();
+        List<ConsultantResponse> consultantResponses = null;
+        for (Consultant consultant : consultants) {
+            consultantResponses.add(userMapper.consultantToUserResponse(consultant));
+        }
+
+        return consultantResponses;
     }
 
     

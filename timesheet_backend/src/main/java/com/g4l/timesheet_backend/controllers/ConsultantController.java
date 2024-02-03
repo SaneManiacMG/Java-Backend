@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.g4l.timesheet_backend.interfaces.ConsultantService;
-import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.requests.ConsultantRequest;
+import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
 
 @RestController
 @RequestMapping("/consultants")
@@ -24,22 +24,22 @@ public class ConsultantController {
     }
 
     @PostMapping("/createConsultant")
-    public Consultant createConsultant(ConsultantRequest consultant) {
+    public ConsultantResponse createConsultant(ConsultantRequest consultant) {
         return consultantService.createConsultant(consultant);
     }
 
     @PutMapping("/updateConsultant")
-    public Consultant updateConsultant(ConsultantRequest consultant) {
+    public ConsultantResponse updateConsultant(ConsultantRequest consultant) {
         return consultantService.updateConsultant(consultant);
     }
 
     @GetMapping("/getConsultantById")
-    public Consultant getConsultantById(String consultantId) {
+    public ConsultantResponse getConsultantById(String consultantId) {
         return consultantService.getConsultantById(consultantId);
     }
 
     @GetMapping("/getConsultantByEmail")
-    public Consultant getConsultantByEmail(String email) {
+    public ConsultantResponse getConsultantByEmail(String email) {
         return consultantService.getConsultantByEmail(email);
     }
 
@@ -49,7 +49,7 @@ public class ConsultantController {
     }
 
     @DeleteMapping("/deleteConsultant")
-    public List<Consultant> getAllConsultants() {
+    public List<ConsultantResponse> getAllConsultants() {
         return consultantService.getAllConsultants();
     }
 }

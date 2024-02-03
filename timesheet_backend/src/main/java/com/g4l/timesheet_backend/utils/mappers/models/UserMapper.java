@@ -32,12 +32,4 @@ public class UserMapper {
     public ManagerResponse managerToUserResponse(Manager manager) {
         return modelMapper.map(manager, ManagerResponse.class);
     }
-
-    public ConsultantRequest consultantToUserRequest(Consultant consultant) {
-        return modelMapper.map(consultant, ConsultantRequest.class);
-    }
-
-    public ManagerRequest managerToUserRequest(Manager manager) {
-        return modelMapper.map(manager, ManagerRequest.class);
-    }
 }
