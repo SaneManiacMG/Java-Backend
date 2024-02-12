@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ClientTeamRequest {
-    public String id;
+    public String clientTeamId;
     public String teamName;
     public String clientId;
     public String managerId;

@@ -7,7 +7,7 @@ import com.g4l.timesheet_backend.models.responses.ClientResponse;
 import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 
 public interface ClientService {
-    public ClientResponse createClient(ClientRequest clientRequest);
+    public ClientResponse createClient(String clientRequest);
     public ClientResponse updateClient(ClientRequest clientRequest);
     public ClientResponse getClientById(String clientId);
     public ClientTeamResponse createClientTeam(ClientTeamRequest clientTeam);

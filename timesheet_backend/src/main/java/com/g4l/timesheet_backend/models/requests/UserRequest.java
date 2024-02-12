@@ -7,7 +7,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ClientRequest {
-    public String id;
-    public String clientName;
+public class UserRequest {
+    String idNumber;
+    String firstName;
+    String lastName;
+    String userName;
+    String email;
+    String phoneNumber;
 }

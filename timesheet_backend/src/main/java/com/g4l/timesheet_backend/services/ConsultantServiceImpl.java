@@ -1,62 +1,82 @@
 package com.g4l.timesheet_backend.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.ConsultantService;
+import com.g4l.timesheet_backend.interfaces.UserService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
-import com.g4l.timesheet_backend.models.requests.ConsultantRequest;
+import com.g4l.timesheet_backend.models.enums.SequenceType;
+import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
+import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 
 @Service
 public class ConsultantServiceImpl implements ConsultantService {
 
-    private ConsultantRepository consultantRepository;
-    private UserMapper userMapper;
+    private final ConsultantRepository consultantRepository;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
-    public ConsultantServiceImpl(ConsultantRepository consultantRepository, UserMapper userMapper) {
+    public ConsultantServiceImpl(ConsultantRepository consultantRepository, UserMapper userMapper, UserService userService) {
         this.consultantRepository = consultantRepository;
+        this.userService = userService;
         this.userMapper = userMapper;
     }
 
     @Override
-    public ConsultantResponse createConsultant(ConsultantRequest consultantRequest) {
-        Consultant consultant = consultantRepository.save(userMapper.userRequestToConsultant(consultantRequest));
+    public ConsultantResponse createConsultant(UserRequest userRequest) {
+        Consultant consultant = userMapper.userRequestToConsultant(userRequest);
+
+        consultant.setId(SequenceGenerator.generateSequence(SequenceType.CONSULTANT_ID));
+        consultant.setDateCreated(LocalDateTime.now());
+        consultant.setDateModified(LocalDateTime.now());
+
+        consultantRepository.save(consultant);
+
         return userMapper.consultantToUserResponse(consultant);
     }
 
     @Override
-    public ConsultantResponse updateConsultant(ConsultantRequest consultantRequest) {
-        Consultant consultant =  consultantRepository.save(userMapper.userRequestToConsultant(consultantRequest));
-        return userMapper.consultantToUserResponse(consultant);
+    public ConsultantResponse updateConsultant(UserRequest userRequest) {
+        Consultant consultant =  userMapper.userRequestToConsultant(userRequest);
+
+        consultant.setDateModified(LocalDateTime.now());
+        Consultant updatedConsultant = consultant;
+
+        consultantRepository.save(updatedConsultant);
+
+        return userMapper.consultantToUserResponse(updatedConsultant);
     }
 
     @Override
     public ConsultantResponse getConsultantById(String consultantId) {
         Consultant consultant =  consultantRepository.findById(consultantId).orElse(null);
+
         return userMapper.consultantToUserResponse(consultant);
     }
 
     @Override
-    public ConsultantResponse getConsultantByEmail(String email) {
-        Consultant consultant = consultantRepository.findByEmail(email);
-        return userMapper.consultantToUserResponse(consultant);
+    public ConsultantResponse getConsultant(String userId) {
+        Object user = userService.getUser(userId);
+
+        if (user instanceof Consultant) return userMapper.consultantToUserResponse((Consultant) user);
+
+        return null;
     }
 
     @Override
     public String deleteConsultant(String consultantId) {
         consultantRepository.deleteById(consultantId);
-        return "Consultant deleted";
+        return "Consultant with consultant id " + consultantId + " deleted";
     }
 
     @Override
     public List<ConsultantResponse> getAllConsultants() {
-        List<Consultant> consultants = consultantRepository.findAll();
-        List<ConsultantResponse> consultantResponses = null;
-        for (Consultant consultant : consultants) {
-            consultantResponses.add(userMapper.consultantToUserResponse(consultant));
-        }
+        List<ConsultantResponse> consultantResponses = consultantRepository.findAll().stream()
+            .map(consultant -> userMapper.consultantToUserResponse(consultant)).toList();
 
         return consultantResponses;
     }

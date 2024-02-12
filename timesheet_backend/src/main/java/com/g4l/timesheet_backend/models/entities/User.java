@@ -1,16 +1,24 @@
 package com.g4l.timesheet_backend.models.entities;
 
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
 @MappedSuperclass
 public class User {
+    public User(String idNumber, String firstName, String lastName, String userName, String email, String phoneNumber) {
+        this.idNumber = idNumber;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userName = userName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
     @Column(name = "id_number")
     String idNumber;
     @Column(name = "first_name")
@@ -23,4 +31,8 @@ public class User {
     String email;
     @Column(name = "phone_number")
     String phoneNumber;
+    @Column(name = "date_created")
+    LocalDateTime dateCreated;
+    @Column(name = "date_modified")
+    LocalDateTime dateModified;
 }

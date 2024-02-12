@@ -12,8 +12,8 @@ import com.g4l.timesheet_backend.utils.mappers.models.LogbookMapper;
 
 @Service
 public class LogbookServiceImpl implements LogbookService {
-    private LogbookRepository logbookRepository;
-    private LogbookMapper logbookMapper;
+    private final LogbookRepository logbookRepository;
+    private final LogbookMapper logbookMapper;
 
     public LogbookServiceImpl(LogbookRepository logbookRepository, LogbookMapper logbookMapper) {
         this.logbookRepository = logbookRepository;

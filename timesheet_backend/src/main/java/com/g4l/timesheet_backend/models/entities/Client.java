@@ -1,26 +1,30 @@
 package com.g4l.timesheet_backend.models.entities;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "clients")
 public class Client {
+    public Client(String id, String clientName) {
+        this.id = id;
+        this.clientName = clientName;
+    }
+
     @Id
     @Column(name = "client_id")
     private String id;
     @Column(name = "client_name")
     private String clientName;
-    @OneToMany
-    @JoinColumn(name = "team_id")
-    private List<ClientTeam> clientTeams;
+    @Column(name = "date_created")
+    LocalDateTime dateCreated;
+    @Column(name = "date_modified")
+    LocalDateTime dateModified;
 }

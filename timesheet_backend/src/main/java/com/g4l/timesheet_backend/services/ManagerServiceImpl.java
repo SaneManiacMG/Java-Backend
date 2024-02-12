@@ -1,82 +1,84 @@
 package com.g4l.timesheet_backend.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.ManagerService;
-import com.g4l.timesheet_backend.models.entities.Consultant;
+import com.g4l.timesheet_backend.interfaces.UserService;
 import com.g4l.timesheet_backend.models.entities.Manager;
-import com.g4l.timesheet_backend.models.requests.ManagerRequest;
-import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
+import com.g4l.timesheet_backend.models.enums.SequenceType;
+import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.models.responses.ManagerResponse;
-import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
+import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 
 @Service
 public class ManagerServiceImpl implements ManagerService {
 
-    private ManagerRepository managerRepository;
-    private ConsultantRepository consultantRepository;
-    private UserMapper userMapper;
+    private final ManagerRepository managerRepository;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
-    public ManagerServiceImpl(ManagerRepository managerRepository, UserMapper userMapper, 
-        ConsultantRepository consultantRepository) {
+    public ManagerServiceImpl(ManagerRepository managerRepository, UserMapper userMapper, UserService userService) {
         this.managerRepository = managerRepository;
         this.userMapper = userMapper;
-        this.consultantRepository = consultantRepository;
+        this.userService = userService;
     }
 
     @Override
-    public ManagerResponse createManager(ManagerRequest managerRequest) {
-        Manager manager = managerRepository.save(userMapper.userRequestToManager(managerRequest));
+    public ManagerResponse createManager(UserRequest userRequest) {
+        Manager manager = userMapper.userRequestToManager(userRequest);
+
+        manager.setId(SequenceGenerator.generateSequence(SequenceType.MANAGER_ID));
+        manager.setDateCreated(LocalDateTime.now());
+        manager.setDateModified(LocalDateTime.now());
+
+        managerRepository.save(manager);
         return userMapper.managerToUserResponse(manager);
     }
 
     @Override
-    public ManagerResponse updateManager(ManagerRequest managerRequest) {
-        Manager manager = managerRepository.save(userMapper.userRequestToManager(managerRequest));
-        return userMapper.managerToUserResponse(manager);
+    public ManagerResponse updateManager(UserRequest userRequest) {
+        Manager manager = userMapper.userRequestToManager(userRequest);
+
+        manager.setDateModified(LocalDateTime.now());
+        Manager updatedManager = manager;
+
+        managerRepository.save(updatedManager);
+
+        return userMapper.managerToUserResponse(updatedManager);
     }
 
     @Override
     public ManagerResponse getManagerById(String managerId) {
         Manager manager =  managerRepository.findById(managerId).orElse(null);
-        return userMapper.managerToUserResponse(manager);
-    }
 
-    @Override
-    public ManagerResponse getManagerByEmail(String email) {
-        Manager manager =  managerRepository.findByEmail(email);
         return userMapper.managerToUserResponse(manager);
     }
 
     @Override
     public String deleteManager(String managerId) {
         managerRepository.deleteById(managerId);
+
         return "Manager deleted";
     }
 
     @Override
     public List<ManagerResponse> getAllManagers() {
-        List<Manager> managers = managerRepository.findAll();
-        List<ManagerResponse> managerResponses = null;
-        for (Manager manager: managers) {
-            managerResponses.add(userMapper.managerToUserResponse(manager));
-        }
+        List<ManagerResponse> managerResponses = managerRepository.findAll().stream()
+            .map(manager -> userMapper.managerToUserResponse(manager)).toList();
 
         return managerResponses;
     }
 
     @Override
-    public List<ConsultantResponse> getAllConsultantsByManagerId(String managerId) {
-        List<Consultant> consultants = consultantRepository.findConsultantsByManagerId(managerId);
-        List<ConsultantResponse> consultantResponses = null;
-        for (Consultant consultant: consultants) {
-            consultantResponses.add(userMapper.consultantToUserResponse(consultant));
-        }
+    public ManagerResponse getManager(String userId) {
+        Object user = userService.getUser(userId);
 
-        return consultantResponses;
+        if (user instanceof Manager) return userMapper.managerToUserResponse((Manager) user);
+
+        return null;
     }
-
     
 }

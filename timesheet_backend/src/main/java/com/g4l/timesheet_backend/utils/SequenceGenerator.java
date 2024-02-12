@@ -1,6 +1,7 @@
 package com.g4l.timesheet_backend.utils;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.models.enums.SequenceType;
@@ -31,9 +32,8 @@ public abstract class SequenceGenerator {
     }
 
     private static String dateString() {
-        LocalDate localDate = LocalDate.now();
-        String date = localDate.toString();
-        return date;
+        String dateTime = DateTimeFormatter.ofPattern("yyMMddhhmmss").format(LocalDateTime.now());
+        return dateTime;
     }
 
     private static String randomNumber() {
