@@ -13,6 +13,8 @@ import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 
+import lombok.NonNull;
+
 @Service
 public class ConsultantServiceImpl implements ConsultantService {
 
@@ -20,7 +22,8 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public ConsultantServiceImpl(ConsultantRepository consultantRepository, UserMapper userMapper, UserService userService) {
+    public ConsultantServiceImpl(ConsultantRepository consultantRepository, UserMapper userMapper,
+            UserService userService) {
         this.consultantRepository = consultantRepository;
         this.userService = userService;
         this.userMapper = userMapper;
@@ -39,12 +42,17 @@ public class ConsultantServiceImpl implements ConsultantService {
         return userMapper.consultantToUserResponse(consultant);
     }
 
+    @SuppressWarnings("null")
     @Override
     public ConsultantResponse updateConsultant(UserRequest userRequest) {
-        Consultant consultant =  userMapper.userRequestToConsultant(userRequest);
+        Consultant oldConsultantDetails = (Consultant) userService.getUser(userRequest.getUsername(),
+                userRequest.getIdNumber(),
+                userRequest.getEmail());
 
-        consultant.setDateModified(LocalDateTime.now());
-        Consultant updatedConsultant = consultant;
+        if (oldConsultantDetails == null)
+            return null;
+
+        Consultant updatedConsultant = (Consultant) userService.userUpdater(userRequest, oldConsultantDetails);
 
         consultantRepository.save(updatedConsultant);
 
@@ -52,23 +60,24 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     @Override
-    public ConsultantResponse getConsultantById(String consultantId) {
-        Consultant consultant =  consultantRepository.findById(consultantId).orElse(null);
+    public ConsultantResponse getConsultantById(@NonNull String consultantId) {
+        Consultant consultant = consultantRepository.findById(consultantId).orElse(null);
 
         return userMapper.consultantToUserResponse(consultant);
     }
 
     @Override
-    public ConsultantResponse getConsultant(String userId) {
+    public ConsultantResponse getConsultant(@NonNull String userId) {
         Object user = userService.getUser(userId);
 
-        if (user instanceof Consultant) return userMapper.consultantToUserResponse((Consultant) user);
+        if (user instanceof Consultant)
+            return userMapper.consultantToUserResponse((Consultant) user);
 
         return null;
     }
 
     @Override
-    public String deleteConsultant(String consultantId) {
+    public String deleteConsultant(@NonNull String consultantId) {
         consultantRepository.deleteById(consultantId);
         return "Consultant with consultant id " + consultantId + " deleted";
     }
@@ -76,10 +85,24 @@ public class ConsultantServiceImpl implements ConsultantService {
     @Override
     public List<ConsultantResponse> getAllConsultants() {
         List<ConsultantResponse> consultantResponses = consultantRepository.findAll().stream()
-            .map(consultant -> userMapper.consultantToUserResponse(consultant)).toList();
+                .map(consultant -> userMapper.consultantToUserResponse(consultant)).toList();
 
         return consultantResponses;
     }
 
-    
+    @Override
+    public ConsultantResponse assignConsultantToClientTeam(@NonNull String consultantId, @NonNull String clientTeamId) {
+        Consultant consultant = consultantRepository.findById(consultantId).orElse(null);
+
+        if (consultant == null)
+            return null;
+
+        consultant.setClientTeamId(clientTeamId);
+        consultant.setDateModified(LocalDateTime.now());
+
+        consultantRepository.save(consultant);
+
+        return userMapper.consultantToUserResponse(consultant);
+    }
+
 }

@@ -13,6 +13,8 @@ import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 
+import lombok.NonNull;
+
 @Service
 public class ManagerServiceImpl implements ManagerService {
 
@@ -51,14 +53,14 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public ManagerResponse getManagerById(String managerId) {
+    public ManagerResponse getManagerById(@NonNull String managerId) {
         Manager manager =  managerRepository.findById(managerId).orElse(null);
 
         return userMapper.managerToUserResponse(manager);
     }
 
     @Override
-    public String deleteManager(String managerId) {
+    public String deleteManager(@NonNull String managerId) {
         managerRepository.deleteById(managerId);
 
         return "Manager deleted";
@@ -73,7 +75,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public ManagerResponse getManager(String userId) {
+    public ManagerResponse getManager(@NonNull String userId) {
         Object user = userService.getUser(userId);
 
         if (user instanceof Manager) return userMapper.managerToUserResponse((Manager) user);

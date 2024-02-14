@@ -54,4 +54,9 @@ public class ConsultantController {
         consultantService.deleteConsultant(consultantId);
         return "Consultant deleted";
     }
+
+    @PutMapping("/assignConsultantToClientTeam/{consultantId}/to/{clientTeamId}")
+    public ConsultantResponse assignConsultantToClientTeam(@PathVariable String consultantId, @PathVariable String clientTeamId) {
+        return consultantService.assignConsultantToClientTeam(consultantId, clientTeamId);
+    }
 }

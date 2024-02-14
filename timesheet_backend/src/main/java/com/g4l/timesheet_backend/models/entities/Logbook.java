@@ -1,5 +1,6 @@
 package com.g4l.timesheet_backend.models.entities;
 
+import java.time.LocalDateTime;
 import com.g4l.timesheet_backend.models.enums.LogbookStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,4 +52,9 @@ public class Logbook {
     private LogbookStatus status;
     @Column(name = "status_description")
     private String statusDescription;
+
+    @Column(name = "date_created")
+    private LocalDateTime dateCreated;
+    @Column(name = "date_modified")
+    private LocalDateTime dateModified;
 }

@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Data
 @MappedSuperclass
 public class User {
-    public User(String idNumber, String firstName, String lastName, String userName, String email, String phoneNumber) {
+    public User(String idNumber, String firstName, String lastName, String username, String email, String phoneNumber) {
         this.idNumber = idNumber;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.userName = userName;
+        this.username = username;
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
@@ -26,7 +26,7 @@ public class User {
     @Column(name = "last_name")
     String lastName;
     @Column(name="user_name")
-    String userName;
+    String username;
     @Column
     String email;
     @Column(name = "phone_number")

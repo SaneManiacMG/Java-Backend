@@ -16,6 +16,8 @@ import com.g4l.timesheet_backend.repositories.ClientTeamRepository;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.ClientMapper;
 
+import lombok.NonNull;
+
 @Service
 public class ClientServiceImpl implements ClientService {
 
@@ -57,7 +59,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ClientResponse getClientById(String clientId) {
+    public ClientResponse getClientById(@NonNull String clientId) {
         Client client = clientRepository.findById(clientId).orElse(null);
 
         return clientMapper.clientToClientResponse(client);
@@ -72,8 +74,6 @@ public class ClientServiceImpl implements ClientService {
         clientTeam.setDateModified(LocalDateTime.now());
 
         clientTeamRepository.save(clientTeam);
-
-        // TODO: need to add the client team id to client record
 
         return clientMapper.clientToTeamResponse(clientTeam);
     }
@@ -92,21 +92,21 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ClientTeamResponse getClientTeamById(String clientTeamId) {
+    public ClientTeamResponse getClientTeamById(@NonNull String clientTeamId) {
         ClientTeam clientTeam = clientTeamRepository.findById(clientTeamId).orElse(null);
 
         return clientMapper.clientToTeamResponse(clientTeam);
     }
 
     @Override
-    public String deleteClient(String clientId) {
+    public String deleteClient(@NonNull String clientId) {
         clientRepository.deleteById(clientId);
 
         return "Client with userId " + clientId + " deleted";
     }
 
     @Override
-    public String deleteClientTeam(String clientTeamId) {
+    public String deleteClientTeam(@NonNull String clientTeamId) {
         clientTeamRepository.deleteById(clientTeamId);
 
         return "ClientTeam with userId " + clientTeamId + " deleted";
