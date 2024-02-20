@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @MappedSuperclass
-public class User {
+public abstract class User {
     public User(String idNumber, String firstName, String lastName, String username, String email, String phoneNumber) {
         this.idNumber = idNumber;
         this.firstName = firstName;

@@ -14,7 +14,7 @@ import com.g4l.timesheet_backend.models.requests.ClientTeamRequest;
 import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 
 @RestController
-@RequestMapping("/clientTeam")
+@RequestMapping("/clientTeams")
 public class ClientTeamController {
     private ClientService clientService;
     

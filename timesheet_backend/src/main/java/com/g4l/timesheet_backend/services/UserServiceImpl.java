@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public Object getUser(String userId) {
-        String cellPhoneNumberPattern = "^\\d{10}$";
+        //String cellPhoneNumberPattern = "^\\d{10}$";
         String idNumberPattern = "^\\d{13}$";
         String usernamePattern = "^[a-zA-Z0-9._-]{3,}$";
         String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
