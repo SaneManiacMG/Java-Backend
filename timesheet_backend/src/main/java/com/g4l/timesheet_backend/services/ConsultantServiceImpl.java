@@ -45,7 +45,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     @SuppressWarnings("null")
     @Override
     public ConsultantResponse updateConsultant(UserRequest userRequest) {
-        Consultant oldConsultantDetails = (Consultant) userService.getUser(userRequest.getUsername(),
+        Consultant oldConsultantDetails = (Consultant) userService.getUser(userRequest.getUserName(),
                 userRequest.getIdNumber(),
                 userRequest.getEmail());
 

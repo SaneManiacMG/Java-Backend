@@ -7,6 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.g4l.timesheet_backend.models.enums.AccountType;
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -14,26 +16,29 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Data
 @MappedSuperclass
 public abstract class User implements UserDetails {
-    public User(String userId, String idNumber, String firstName, String lastName, String username, String email,
+    public User(String id, String idNumber, String firstName, String lastName, String userName, String email,
             String phoneNumber) {
-        this.userId = userId;
+        this.id = id;
         this.idNumber = idNumber;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.username = username;
+        this.userName = userName;
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
 
+    public User() {
+        super();
+        this.accountType = AccountType.UNVERIFIED;
+    }
+
     @Id
     @Column(name = "user_id")
-    String userId;
+    String id;
     @Column(name = "id_number", unique = true, nullable = false)
     String idNumber;
     @Column(name = "first_name")
@@ -41,7 +46,7 @@ public abstract class User implements UserDetails {
     @Column(name = "last_name")
     String lastName;
     @Column(name = "user_name", unique = true, nullable = false)
-    String username;
+    String userName;
     @Column(unique = true, nullable = false)
     String email;
     @Column(name = "phone_number", unique = true, nullable = false)
@@ -60,6 +65,7 @@ public abstract class User implements UserDetails {
     Set<Role> authorities;
 
     @Column
+    @Enumerated(EnumType.STRING)
     AccountType accountType;
 
     @Override
@@ -72,9 +78,10 @@ public abstract class User implements UserDetails {
         return password;
     }
 
+    //TODO: Figure out which username is being pulled, userId or username
     @Override
     public String getUsername() {
-        return userId;
+        return id;
     }
 
     @Override

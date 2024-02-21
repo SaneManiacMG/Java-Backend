@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
             manager.setLastName(request.getLastName());
             manager.setEmail(request.getEmail());
             manager.setPhoneNumber(request.getPhoneNumber());
-            manager.setUsername(request.getUsername());
+            manager.setUserName(request.getUserName());
             manager.setDateModified(LocalDateTime.now());
 
             return manager;
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
             consultant.setLastName(request.getLastName());
             consultant.setEmail(request.getEmail());
             consultant.setPhoneNumber(request.getPhoneNumber());
-            consultant.setUsername(request.getUsername());
+            consultant.setUserName(request.getUserName());
             consultant.setDateModified(LocalDateTime.now());
 
             return consultant;

@@ -10,13 +10,11 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ConsultantResponse extends User {
-    public String id;
     public String teamId;
 
-    public ConsultantResponse(String idNumber, String firstName, String lastName, String username, String email,
-            String phoneNumber, String id, String teamId) {
-        super(idNumber, firstName, lastName, username, email, phoneNumber);
-        this.id = id;
+    public ConsultantResponse(String id, String idNumber, String firstName, String lastName, String userName, String email,
+            String phoneNumber, String teamId) {
+        super(id, idNumber, firstName, lastName, userName, email, phoneNumber);
         this.teamId = teamId;
     }
 }

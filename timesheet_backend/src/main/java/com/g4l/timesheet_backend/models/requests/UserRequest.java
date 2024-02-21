@@ -11,7 +11,7 @@ public class UserRequest {
     String idNumber;
     String firstName;
     String lastName;
-    String username;
+    String userName;
     String email;
     String phoneNumber;
 }
