@@ -24,7 +24,7 @@ public class ClientTeam {
     @Id
     @Column(name = "team_id")
     private String id;
-    @Column(name = "team_name")
+    @Column(name = "team_name", unique = true, nullable = false)
     private String teamName;
     @Column(name = "client_id")
     private String clientId;

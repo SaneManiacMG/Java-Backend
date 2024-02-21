@@ -21,7 +21,7 @@ public class Client {
     @Id
     @Column(name = "client_id")
     private String id;
-    @Column(name = "client_name")
+    @Column(name = "client_name", unique = true, nullable = false)
     private String clientName;
     @Column(name = "date_created")
     LocalDateTime dateCreated;

@@ -19,17 +19,17 @@ public abstract class User {
         this.phoneNumber = phoneNumber;
     }
 
-    @Column(name = "id_number")
+    @Column(name = "id_number", unique = true, nullable = false)
     String idNumber;
     @Column(name = "first_name")
     String firstName;
     @Column(name = "last_name")
     String lastName;
-    @Column(name="user_name")
+    @Column(name="user_name", unique = true, nullable = false)
     String username;
-    @Column
+    @Column(unique = true, nullable = false)
     String email;
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", unique = true, nullable = false)
     String phoneNumber;
     @Column(name = "date_created")
     LocalDateTime dateCreated;
