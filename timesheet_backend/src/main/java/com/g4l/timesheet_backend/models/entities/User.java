@@ -19,7 +19,7 @@ import lombok.Data;
 
 @Data
 @MappedSuperclass
-public abstract class User implements UserDetails {
+public class User implements UserDetails {
     public User(String id, String idNumber, String firstName, String lastName, String userName, String email,
             String phoneNumber) {
         this.id = id;

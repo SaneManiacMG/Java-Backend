@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import com.g4l.timesheet_backend.services.LoginDetailsService;
+import com.g4l.timesheet_backend.services.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private JwtService jwtService;
 
     @Autowired
-    private LoginDetailsService loginDetailsService;
+    private UserServiceImpl userServiceImpl;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -35,7 +35,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = loginDetailsService.loadUserByUsername(userId);
+            UserDetails userDetails = userServiceImpl.loadUserByUsername(userId);
             if (jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = 
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

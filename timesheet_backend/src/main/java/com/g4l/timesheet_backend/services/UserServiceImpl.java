@@ -2,6 +2,9 @@ package com.g4l.timesheet_backend.services;
 
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.UserService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
@@ -11,7 +14,7 @@ import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
     private final ConsultantRepository consultantRepository;
     private final ManagerRepository managerRepository;
 
@@ -21,7 +24,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public Object getUser(String userId) {
-        //String cellPhoneNumberPattern = "^\\d{10}$";
+        // String cellPhoneNumberPattern = "^\\d{10}$";
         String idNumberPattern = "^\\d{13}$";
         String usernamePattern = "^[a-zA-Z0-9._-]{3,}$";
         String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
@@ -36,10 +39,10 @@ public class UserServiceImpl implements UserService {
         ;
 
         if (Pattern.matches(usernamePattern, userId)) {
-            if (consultantRepository.findByUsername(userId) != null)
-                return consultantRepository.findByUsername(userId);
-            if (managerRepository.findByUsername(userId) != null)
-                return managerRepository.findByUsername(userId);
+            if (consultantRepository.findByUserName(userId) != null)
+                return consultantRepository.findByUserName(userId);
+            if (managerRepository.findByUserName(userId) != null)
+                return managerRepository.findByUserName(userId);
             return null;
         }
         ;
@@ -97,6 +100,16 @@ public class UserServiceImpl implements UserService {
             return consultant;
         }
         return null;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (consultantRepository.findByUserName(username) != null)
+            return consultantRepository.findByUserName(username);
+        if (managerRepository.findByUserName(username) != null)
+            return managerRepository.findByUserName(username);
+
+        throw new UsernameNotFoundException("User not found");
     }
 
 }

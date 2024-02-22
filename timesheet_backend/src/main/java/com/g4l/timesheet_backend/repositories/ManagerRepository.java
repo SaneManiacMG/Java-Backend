@@ -7,6 +7,6 @@ import com.g4l.timesheet_backend.models.entities.Manager;
 @Repository
 public interface ManagerRepository extends JpaRepository<Manager, String>{
     public Manager findByEmail(String email);
-    public Manager findByUsername(String username);
+    public Manager findByUserName(String userName);
     public Manager findByIdNumber(String idNumber);
 }

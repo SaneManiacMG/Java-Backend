@@ -31,6 +31,8 @@ public class Logbook {
     private Manager manager;
     @Column(name = "week_number")
     private int weekNumber;
+
+    //TODO: figure out how to pass the timesheet as a json object for the DB
     @Column
     private double monday;
     @Column
@@ -47,6 +49,7 @@ public class Logbook {
     private double sunday;
     @Column(name = "total_hours")
     private double totalHours;
+    
     @Enumerated(EnumType.STRING)
     @Column
     private LogbookStatus status;
