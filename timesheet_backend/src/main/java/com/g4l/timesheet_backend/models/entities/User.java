@@ -55,9 +55,9 @@ public class User implements UserDetails {
     LocalDateTime dateCreated;
     @Column(name = "date_modified")
     LocalDateTime dateModified;
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     String password;
-    @Column(name = "authorities", nullable = false)
+    @Column(name = "authorities")
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"), 
@@ -76,6 +76,14 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     //TODO: Figure out which username is being pulled, userId or username

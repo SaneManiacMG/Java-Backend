@@ -2,6 +2,7 @@ package com.g4l.timesheet_backend.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.interfaces.UserService;
@@ -12,7 +13,6 @@ import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
-
 import lombok.NonNull;
 
 @Service
@@ -21,12 +21,14 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final ConsultantRepository consultantRepository;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public ConsultantServiceImpl(ConsultantRepository consultantRepository, UserMapper userMapper,
-            UserService userService) {
+            UserService userService, PasswordEncoder passwordEncoder) {
         this.consultantRepository = consultantRepository;
         this.userService = userService;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -36,6 +38,7 @@ public class ConsultantServiceImpl implements ConsultantService {
         consultant.setId(SequenceGenerator.generateSequence(SequenceType.CONSULTANT_ID));
         consultant.setDateCreated(LocalDateTime.now());
         consultant.setDateModified(LocalDateTime.now());
+        consultant.setPassword(passwordEncoder.encode("NOT_SET"));
 
         consultantRepository.save(consultant);
 
