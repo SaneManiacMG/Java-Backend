@@ -1,5 +1,6 @@
 package com.g4l.timesheet_backend.services;
 
+import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,20 +47,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public Object resetPassword(AuthRequest authRequest) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'resetPassword'");
+    public Object resetPassword(PasswordRequest passwordRequest) {
+        return null;
     }
 
     @Override
-    public Object changePassword(AuthRequest authRequest) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'changePassword'");
+    public Object changePassword(PasswordRequest passwordRequest) {
+        return null;
     }
 
     @Override
-    public Object changeAccountType(String userId, AccountType accountType) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'changeAccountType'");
+    public Object addAccountType(String userId, AccountType accountType) {
+        return null;
+    }
+
+    @Override
+    public Object removeAccountType(String userId, AccountType accountType) {
+        return null;
     }
 }
