@@ -31,4 +31,14 @@ public class UserMapper {
     public ManagerResponse managerToUserResponse(Manager manager) {
         return modelMapper.map(manager, ManagerResponse.class);
     }
+
+    public UserRequest entityToUserRequest(Object entity) {
+        if (entity instanceof Consultant) {
+            return modelMapper.map(entity, UserRequest.class);
+        }
+        if (entity instanceof Manager) {
+            return modelMapper.map(entity, UserRequest.class);
+        }
+        return null;
+    }
 }

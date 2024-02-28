@@ -2,12 +2,15 @@ package com.g4l.timesheet_backend.controllers;
 
 import com.g4l.timesheet_backend.models.enums.AccountType;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
-import com.g4l.timesheet_backend.models.responses.AuthResponse;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import com.g4l.timesheet_backend.interfaces.AuthenticationService;
 import com.g4l.timesheet_backend.models.requests.AuthRequest;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,8 +22,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest authRequest) {
-        return (AuthResponse) authenticationService.login(authRequest);
+    public Object login(@RequestBody AuthRequest authRequest) {
+        return authenticationService.login(authRequest);
     }
 
     @PutMapping("/setPassword")
@@ -34,12 +37,12 @@ public class AuthController {
     }
 
     @PutMapping("/addAccountType/{accountType}/to/{userId}")
-    public String addAccountType(@RequestBody String userId, @RequestBody AccountType accountType) {
+    public String addAccountType(@RequestParam String userId, @RequestParam AccountType accountType) {
         return (String) authenticationService.addAccountType(userId, accountType);
     }
 
     @DeleteMapping("/removeAccountType/{accountType}/from/{userId}")
-    public String removeAccountType(@RequestBody String userId, @RequestBody AccountType accountType) {
+    public String removeAccountType(@RequestParam String userId, @RequestParam AccountType accountType) {
         return (String) authenticationService.removeAccountType(userId, accountType);
     }
 }

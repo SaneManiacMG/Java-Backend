@@ -2,9 +2,11 @@ package com.g4l.timesheet_backend.services;
 
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
+import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.UserService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
@@ -17,10 +19,13 @@ import com.g4l.timesheet_backend.repositories.ManagerRepository;
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final ConsultantRepository consultantRepository;
     private final ManagerRepository managerRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(ConsultantRepository consultantRepository, ManagerRepository managerRepository) {
+    public UserServiceImpl(ConsultantRepository consultantRepository, ManagerRepository managerRepository,
+                           PasswordEncoder passwordEncoder) {
         this.consultantRepository = consultantRepository;
         this.managerRepository = managerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Object getUser(String userId) {
@@ -99,6 +104,46 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
             return consultant;
         }
+        return null;
+    }
+
+    @Override
+    public Object resetPassword(PasswordRequest passwordRequest) {
+        Object userToUpdate = getUser(passwordRequest.getUserId());
+
+        if (userToUpdate instanceof Consultant) {
+            ((Consultant) userToUpdate).setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
+            ((Consultant) userToUpdate).setDateModified(LocalDateTime.now());
+            consultantRepository.save((Consultant) userToUpdate);
+            return userToUpdate;
+        }
+
+        if (userToUpdate instanceof Manager) {
+            ((Manager) userToUpdate).setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
+            ((Manager) userToUpdate).setDateModified(LocalDateTime.now());
+            managerRepository.save((Manager) userToUpdate);
+            return userToUpdate;
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object changePassword(PasswordRequest passwordRequest) {
+        Object userToUpdate = getUser(passwordRequest.getUserId());
+
+        if (userToUpdate instanceof Consultant) {
+            if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), ((Consultant) userToUpdate).getPassword())) {
+                return resetPassword(passwordRequest);
+            }
+        }
+
+        if (userToUpdate instanceof Manager) {
+            if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), ((Manager) userToUpdate).getPassword())) {
+                return resetPassword(passwordRequest);
+            }
+        }
+
         return null;
     }
 
