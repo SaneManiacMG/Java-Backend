@@ -12,14 +12,14 @@ import org.springframework.security.core.GrantedAuthority;
 import lombok.Data;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "user_roles")
 @Data
 public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "role_id")
-    private Integer roleId;
+    private int roleId;
 
     private String authority;
 
