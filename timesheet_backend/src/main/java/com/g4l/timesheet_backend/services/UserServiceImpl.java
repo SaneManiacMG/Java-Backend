@@ -1,8 +1,6 @@
 package com.g4l.timesheet_backend.services;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Pattern;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,15 +11,12 @@ import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.UserService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
-import com.g4l.timesheet_backend.models.entities.Role;
 import com.g4l.timesheet_backend.models.entities.User;
 import com.g4l.timesheet_backend.models.enums.AccountStatus;
-import com.g4l.timesheet_backend.models.enums.AccountType;
+import com.g4l.timesheet_backend.models.enums.AccountRole;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
-import com.g4l.timesheet_backend.repositories.UserAuthoritiesRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,7 +25,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final ConsultantRepository consultantRepository;
     private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserAuthoritiesRepository userAuthoritiesRepository;
 
     public Object getUser(String userId) {
         // String cellPhoneNumberPattern = "^\\d{10}$";
@@ -140,7 +134,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Object addAccountType(String userId, AccountType accountType) {
+    public Object addAccountType(String userId, AccountRole accountType) {
         Object user = getUser(userId);
 
         if (user == null)
@@ -158,7 +152,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Object removeAccountType(String userId, AccountType accountType) {
+    public Object removeAccountType(String userId, AccountRole accountType) {
         Object user = getUser(userId);
 
         if (user != null)
@@ -167,16 +161,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return null;
     }
 
-    private User updateAuthorities(User user, AccountType accountType, boolean remove) {
-        Set<Role> authorities = (HashSet) user.getAuthorities();
-
-        if (remove)
-            authorities.remove(accountType);
-
-        user.setAuthorities(authorities);
-        user.setDateModified(LocalDateTime.now());
-
-        return saveUser(user);
+    private User updateAuthorities(User user, AccountRole accountType, boolean remove) {
+        return null;
     }
 
     @Override
@@ -224,15 +210,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public <T extends User> T createUser(T user) {
-        Set<Role> roles = new HashSet<>();
+        // Set<Role> roles = new HashSet<>();
 
         user.setAccountStatus(AccountStatus.UNVERIFIED);
         user.setDateCreated(LocalDateTime.now());
         user.setDateModified(LocalDateTime.now());
         user.setPassword(passwordEncoder.encode("NOT_SET"));
 
-        roles.add(userAuthoritiesRepository.findByAuthority("ROLE_UNVERIFIED"));
-        user.setAuthorities(roles);
+        // roles.add(userAuthoritiesRepository.findByAuthority("ROLE_UNVERIFIED"));
+        // user.setAuthorities(roles);
 
         return user;
     }

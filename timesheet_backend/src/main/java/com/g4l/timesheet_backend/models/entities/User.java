@@ -2,19 +2,16 @@ package com.g4l.timesheet_backend.models.entities;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.g4l.timesheet_backend.models.enums.AccountStatus;
-import com.g4l.timesheet_backend.models.enums.AccountType;
+import com.g4l.timesheet_backend.models.enums.AccountRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 
@@ -34,45 +31,51 @@ public class User implements UserDetails {
 
     public User() {
         super();
-        this.accountType = AccountType.UNVERIFIED;
+        this.accountRole = AccountRole.UNVERIFIED;
     }
 
     @Id
     @Column(name = "user_id")
     String id;
+
     @Column(name = "id_number", unique = true, nullable = false)
     String idNumber;
+
     @Column(name = "first_name")
     String firstName;
+
     @Column(name = "last_name")
     String lastName;
+
     @Column(name = "user_name", unique = true, nullable = false)
     String userName;
+
     @Column(unique = true, nullable = false)
     String email;
+
     @Column(name = "phone_number", unique = true, nullable = false)
     String phoneNumber;
+
     @Column(name = "date_created")
     LocalDateTime dateCreated;
+
     @Column(name = "date_modified")
     LocalDateTime dateModified;
+
     @Column(name = "password")
     String password;
-    @Column(name = "authorities")
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"), 
-        inverseJoinColumns = @JoinColumn(name = "authority_id"))
-    Set<Role> authorities;
+
     @Column
     @Enumerated(EnumType.STRING)
-    AccountType accountType;
+    AccountRole accountRole;
+
     @Column
     @Enumerated(EnumType.STRING)
     AccountStatus accountStatus;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return List.of(new SimpleGrantedAuthority(accountRole.name()));
     }
 
     @Override
@@ -87,7 +90,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return false;
     }
 
     @Override

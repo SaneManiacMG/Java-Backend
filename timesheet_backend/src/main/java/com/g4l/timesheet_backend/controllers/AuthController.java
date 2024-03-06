@@ -1,8 +1,7 @@
 package com.g4l.timesheet_backend.controllers;
 
-import com.g4l.timesheet_backend.models.enums.AccountType;
+import com.g4l.timesheet_backend.models.enums.AccountRole;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,12 +36,8 @@ public class AuthController {
     }
 
     @PutMapping("/addAccountType/{accountType}/to/{userId}")
-    public String addAccountType(@RequestParam String userId, @RequestParam AccountType accountType) {
-        return (String) authenticationService.addAccountType(userId, accountType);
+    public String addAccountType(@RequestParam String userId, @RequestParam AccountRole accountType) {
+        return (String) authenticationService.changeAccountType(userId, accountType);
     }
 
-    @DeleteMapping("/removeAccountType/{accountType}/from/{userId}")
-    public String removeAccountType(@RequestParam String userId, @RequestParam AccountType accountType) {
-        return (String) authenticationService.removeAccountType(userId, accountType);
-    }
 }
