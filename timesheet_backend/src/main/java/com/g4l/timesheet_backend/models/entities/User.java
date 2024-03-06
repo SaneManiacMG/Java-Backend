@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.g4l.timesheet_backend.models.enums.AccountStatus;
 import com.g4l.timesheet_backend.models.enums.AccountType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
@@ -58,15 +59,16 @@ public class User implements UserDetails {
     @Column(name = "password")
     String password;
     @Column(name = "authorities")
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"), 
         inverseJoinColumns = @JoinColumn(name = "authority_id"))
     Set<Role> authorities;
-
     @Column
     @Enumerated(EnumType.STRING)
     AccountType accountType;
+    @Column
+    @Enumerated(EnumType.STRING)
+    AccountStatus accountStatus;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -78,15 +80,6 @@ public class User implements UserDetails {
         return password;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    //TODO: Figure out which username is being pulled, userId or username
     @Override
     public String getUsername() {
         return id;

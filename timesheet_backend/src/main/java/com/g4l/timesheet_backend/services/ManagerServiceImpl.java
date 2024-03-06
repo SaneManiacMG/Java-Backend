@@ -1,6 +1,5 @@
 package com.g4l.timesheet_backend.services;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.ManagerService;
@@ -12,7 +11,6 @@ import com.g4l.timesheet_backend.models.responses.ManagerResponse;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
-
 import lombok.NonNull;
 
 @Service
@@ -33,10 +31,10 @@ public class ManagerServiceImpl implements ManagerService {
         Manager manager = userMapper.userRequestToManager(userRequest);
 
         manager.setId(SequenceGenerator.generateSequence(SequenceType.MANAGER_ID));
-        manager.setDateCreated(LocalDateTime.now());
-        manager.setDateModified(LocalDateTime.now());
+        manager = (Manager) userService.createUser(manager);
 
         managerRepository.save(manager);
+
         return userMapper.managerToUserResponse(manager);
     }
 
@@ -44,12 +42,11 @@ public class ManagerServiceImpl implements ManagerService {
     public ManagerResponse updateManager(UserRequest userRequest) {
         Manager manager = userMapper.userRequestToManager(userRequest);
 
-        manager.setDateModified(LocalDateTime.now());
-        Manager updatedManager = manager;
+        manager = (Manager) userService.updateUserDetails(manager, userRequest);
 
-        managerRepository.save(updatedManager);
+        managerRepository.save(manager);
 
-        return userMapper.managerToUserResponse(updatedManager);
+        return userMapper.managerToUserResponse(manager);
     }
 
     @Override
@@ -63,7 +60,7 @@ public class ManagerServiceImpl implements ManagerService {
     public String deleteManager(@NonNull String managerId) {
         managerRepository.deleteById(managerId);
 
-        return "Manager deleted";
+        return "Manager with id: " + managerId + " has been deleted";
     }
 
     @Override

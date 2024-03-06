@@ -26,7 +26,7 @@ public class AuthController {
         return authenticationService.login(authRequest);
     }
 
-    @PutMapping("/setPassword")
+    @PutMapping("/resetPassword")
     public String setPassword(@RequestBody PasswordRequest passwordRequest) {
         return (String) authenticationService.resetPassword(passwordRequest);
     }

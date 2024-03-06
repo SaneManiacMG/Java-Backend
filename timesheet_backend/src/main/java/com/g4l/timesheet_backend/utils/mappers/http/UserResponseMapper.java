@@ -16,6 +16,9 @@ public class UserResponseMapper {
         if (response instanceof List)
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
 
+        if (response instanceof String)
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -1,6 +1,8 @@
 package com.g4l.timesheet_backend.services;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,22 +13,24 @@ import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.UserService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
+import com.g4l.timesheet_backend.models.entities.Role;
+import com.g4l.timesheet_backend.models.entities.User;
+import com.g4l.timesheet_backend.models.enums.AccountStatus;
+import com.g4l.timesheet_backend.models.enums.AccountType;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
+import com.g4l.timesheet_backend.repositories.UserAuthoritiesRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final ConsultantRepository consultantRepository;
     private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserServiceImpl(ConsultantRepository consultantRepository, ManagerRepository managerRepository,
-                           PasswordEncoder passwordEncoder) {
-        this.consultantRepository = consultantRepository;
-        this.managerRepository = managerRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final UserAuthoritiesRepository userAuthoritiesRepository;
 
     public Object getUser(String userId) {
         // String cellPhoneNumberPattern = "^\\d{10}$";
@@ -35,32 +39,41 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
 
         if (Pattern.matches(idNumberPattern, userId)) {
-            if (consultantRepository.findByIdNumber(userId) != null)
-                return consultantRepository.findByIdNumber(userId);
-            if (managerRepository.findByIdNumber(userId) != null)
-                return managerRepository.findByIdNumber(userId);
-            return null;
+            return findByIdNumber(userId);
         }
-        ;
 
         if (Pattern.matches(usernamePattern, userId)) {
-            if (consultantRepository.findByUserName(userId) != null)
-                return consultantRepository.findByUserName(userId);
-            if (managerRepository.findByUserName(userId) != null)
-                return managerRepository.findByUserName(userId);
-            return null;
+            return findByUserName(userId);
         }
-        ;
 
         if (Pattern.matches(emailPattern, userId)) {
-            if (consultantRepository.findByEmail(userId) != null)
-                return consultantRepository.findByEmail(userId);
-            if (managerRepository.findByEmail(userId) != null)
-                return managerRepository.findByEmail(userId);
-            return null;
+            return findByEmail(userId);
         }
-        ;
 
+        return null;
+    }
+
+    private Object findByEmail(String email) {
+        if (consultantRepository.findByEmail(email) != null)
+            return consultantRepository.findByEmail(email);
+        if (managerRepository.findByEmail(email) != null)
+            return managerRepository.findByEmail(email);
+        return null;
+    }
+
+    private Object findByUserName(String username) {
+        if (consultantRepository.findByUserName(username) != null)
+            return consultantRepository.findByUserName(username);
+        if (managerRepository.findByUserName(username) != null)
+            return managerRepository.findByUserName(username);
+        return null;
+    }
+
+    private Object findByIdNumber(String idNumber) {
+        if (consultantRepository.findByIdNumber(idNumber) != null)
+            return consultantRepository.findByIdNumber(idNumber);
+        if (managerRepository.findByIdNumber(idNumber) != null)
+            return managerRepository.findByIdNumber(idNumber);
         return null;
     }
 
@@ -76,75 +89,44 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Object userUpdater(UserRequest request, Object recordToUpdate) {
-        Manager manager = null;
-        if (recordToUpdate instanceof Manager) {
-            manager = (Manager) recordToUpdate;
-            manager.setId(request.getIdNumber());
-            manager.setFirstName(request.getFirstName());
-            manager.setLastName(request.getLastName());
-            manager.setEmail(request.getEmail());
-            manager.setPhoneNumber(request.getPhoneNumber());
-            manager.setUserName(request.getUserName());
-            manager.setDateModified(LocalDateTime.now());
+    public <T extends User> T updateUserDetails(T user, UserRequest request) {
+        user.setId(request.getIdNumber());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setUserName(request.getUserName());
+        user.setDateModified(LocalDateTime.now());
 
-            return manager;
-        }
-
-        Consultant consultant = null;
-        if (recordToUpdate instanceof Consultant) {
-            consultant = (Consultant) recordToUpdate;
-            consultant.setId(request.getIdNumber());
-            consultant.setFirstName(request.getFirstName());
-            consultant.setLastName(request.getLastName());
-            consultant.setEmail(request.getEmail());
-            consultant.setPhoneNumber(request.getPhoneNumber());
-            consultant.setUserName(request.getUserName());
-            consultant.setDateModified(LocalDateTime.now());
-
-            return consultant;
-        }
-        return null;
+        return user;
     }
 
     @Override
-    public Object resetPassword(PasswordRequest passwordRequest) {
-        Object userToUpdate = getUser(passwordRequest.getUserId());
-
-        if (userToUpdate instanceof Consultant) {
-            ((Consultant) userToUpdate).setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
-            ((Consultant) userToUpdate).setDateModified(LocalDateTime.now());
-            consultantRepository.save((Consultant) userToUpdate);
-            return userToUpdate;
+    public Object resetPassword(PasswordRequest passwordRequest, User user) {
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
+            user.setDateModified(LocalDateTime.now());
+    
+            return saveUser((User) user);
         }
 
-        if (userToUpdate instanceof Manager) {
-            ((Manager) userToUpdate).setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
-            ((Manager) userToUpdate).setDateModified(LocalDateTime.now());
-            managerRepository.save((Manager) userToUpdate);
-            return userToUpdate;
-        }
+        if (getUser(passwordRequest.getUserId()) != null)
+            return resetPassword(passwordRequest, (User) getUser(passwordRequest.getUserId()));
 
         return null;
     }
 
     @Override
     public Object changePassword(PasswordRequest passwordRequest) {
-        Object userToUpdate = getUser(passwordRequest.getUserId());
+        User user = (User) getUser(passwordRequest.getUserId());
 
-        if (userToUpdate instanceof Consultant) {
-            if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), ((Consultant) userToUpdate).getPassword())) {
-                return resetPassword(passwordRequest);
-            }
-        }
+        if (user == null)
+            return null;
 
-        if (userToUpdate instanceof Manager) {
-            if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), ((Manager) userToUpdate).getPassword())) {
-                return resetPassword(passwordRequest);
-            }
-        }
-
-        return null;
+        if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword())) 
+            return resetPassword(passwordRequest, user);
+        else
+            return "Password does not match current password";
     }
 
     @Override
@@ -157,4 +139,101 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         throw new UsernameNotFoundException("User not found");
     }
 
+    @Override
+    public Object addAccountType(String userId, AccountType accountType) {
+        Object user = getUser(userId);
+
+        if (user == null)
+            return null;
+
+        if (user instanceof Consultant) {
+            return updateAuthorities((Consultant) user, accountType, false);
+        }
+
+        if (user instanceof Manager) {
+            return updateAuthorities((Manager) user, accountType, false);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object removeAccountType(String userId, AccountType accountType) {
+        Object user = getUser(userId);
+
+        if (user != null)
+            return saveUser((User) user);
+
+        return null;
+    }
+
+    private User updateAuthorities(User user, AccountType accountType, boolean remove) {
+        Set<Role> authorities = (HashSet) user.getAuthorities();
+
+        if (remove)
+            authorities.remove(accountType);
+
+        user.setAuthorities(authorities);
+        user.setDateModified(LocalDateTime.now());
+
+        return saveUser(user);
+    }
+
+    @Override
+    public Object changeAccountStatus(String userId, AccountStatus accountStatus) {
+        Object user = getUser(userId);
+
+        if (user == null)
+            return null;
+
+        if (user instanceof Consultant) {
+            return updateAccountStatus((Consultant) user, accountStatus);
+        }
+
+        if (user instanceof Manager) {
+            return updateAccountStatus((Manager) user, accountStatus);
+        }
+
+        return null;
+    }
+
+    private User updateAccountStatus(User user, AccountStatus accountStatus) {
+        user.setAccountStatus(accountStatus);
+        user.setDateModified(LocalDateTime.now());
+
+        saveUser(user);
+
+        return null;
+    }
+
+    private User saveUser(User user) {
+        user.setDateModified(LocalDateTime.now());
+
+        if (user instanceof Consultant) {
+            consultantRepository.save((Consultant) user);
+            return user;
+        }
+
+        if (user instanceof Manager) {
+            managerRepository.save((Manager) user);
+            return user;
+        }
+
+        return null;
+    }
+
+    @Override
+    public <T extends User> T createUser(T user) {
+        Set<Role> roles = new HashSet<>();
+
+        user.setAccountStatus(AccountStatus.UNVERIFIED);
+        user.setDateCreated(LocalDateTime.now());
+        user.setDateModified(LocalDateTime.now());
+        user.setPassword(passwordEncoder.encode("NOT_SET"));
+
+        roles.add(userAuthoritiesRepository.findByAuthority("ROLE_UNVERIFIED"));
+        user.setAuthorities(roles);
+
+        return user;
+    }
 }
