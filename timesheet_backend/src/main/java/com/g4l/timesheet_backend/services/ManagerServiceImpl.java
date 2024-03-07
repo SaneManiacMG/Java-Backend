@@ -16,6 +16,13 @@ import lombok.NonNull;
 @Service
 public class ManagerServiceImpl implements ManagerService {
 
+    // TODO: clientTeamId and accountRole not mapping
+    // TODO: handle null responses, currently not handled
+    // TODO: broken mapper (to confirm where exactly)
+    // TODO: handle more exception such as exception handling (currently not user friendly)
+    // TODO: update not working at all
+    // TODO: updating throwing DataIntegrityViolationException
+
     private final ManagerRepository managerRepository;
     private final UserService userService;
     private final UserMapper userMapper;

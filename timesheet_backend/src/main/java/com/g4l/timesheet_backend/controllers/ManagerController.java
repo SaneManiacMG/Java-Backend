@@ -39,8 +39,8 @@ public class ManagerController {
         return managerService.getManagerById(managerId);
     }
 
-    @GetMapping("/getManager/{userId}")
-    public ManagerResponse getManagerByEmail(@PathVariable String userId) {
+    @GetMapping("/getManagerByUserId/{userId}")
+    public ManagerResponse getManagerByUserId(@PathVariable String userId) {
         return managerService.getManager(userId);
     }
 
