@@ -15,8 +15,6 @@ import lombok.NonNull;
 
 @Service
 public class ManagerServiceImpl implements ManagerService {
-
-    // TODO: clientTeamId and accountRole not mapping
     // TODO: handle null responses, currently not handled
     // TODO: broken mapper (to confirm where exactly)
     // TODO: handle more exception such as exception handling (currently not user friendly)
@@ -47,18 +45,19 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public ManagerResponse updateManager(UserRequest userRequest) {
-        Manager manager = userMapper.userRequestToManager(userRequest);
+        Manager recordToUpdate = (Manager) userService.getUser(
+            userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail());
 
-        manager = (Manager) userService.updateUserDetails(manager, userRequest);
+        recordToUpdate = (Manager) userService.updateUserDetails(recordToUpdate, userRequest);
 
-        managerRepository.save(manager);
+        managerRepository.save(recordToUpdate);
 
-        return userMapper.managerToUserResponse(manager);
+        return userMapper.managerToUserResponse(recordToUpdate);
     }
 
     @Override
     public ManagerResponse getManagerById(@NonNull String managerId) {
-        Manager manager =  managerRepository.findById(managerId).orElse(null);
+        Manager manager = managerRepository.findById(managerId).orElse(null);
 
         return userMapper.managerToUserResponse(manager);
     }
@@ -73,7 +72,7 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public List<ManagerResponse> getAllManagers() {
         List<ManagerResponse> managerResponses = managerRepository.findAll().stream()
-            .map(manager -> userMapper.managerToUserResponse(manager)).toList();
+                .map(manager -> userMapper.managerToUserResponse(manager)).toList();
 
         return managerResponses;
     }
@@ -82,9 +81,10 @@ public class ManagerServiceImpl implements ManagerService {
     public ManagerResponse getManager(@NonNull String userId) {
         Object user = userService.getUser(userId);
 
-        if (user instanceof Manager) return userMapper.managerToUserResponse((Manager) user);
+        if (user instanceof Manager)
+            return userMapper.managerToUserResponse((Manager) user);
 
         return null;
     }
-    
+
 }

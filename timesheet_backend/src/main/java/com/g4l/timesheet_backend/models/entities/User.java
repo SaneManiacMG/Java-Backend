@@ -2,7 +2,8 @@ package com.g4l.timesheet_backend.models.entities;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,11 +32,10 @@ public class User implements UserDetails {
 
     public User() {
         super();
-        this.accountRole = AccountRole.UNVERIFIED;
     }
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id", unique = true, nullable = false)
     String id;
 
     @Column(name = "id_number", unique = true, nullable = false)
@@ -67,7 +67,7 @@ public class User implements UserDetails {
 
     @Column
     @Enumerated(EnumType.STRING)
-    AccountRole accountRole;
+    Set<AccountRole> accountRoles;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -75,7 +75,17 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(accountRole.name()));
+        return accountRoles.stream()
+            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+            .collect(Collectors.toSet());
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override

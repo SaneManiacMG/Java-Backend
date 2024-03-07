@@ -1,6 +1,8 @@
 package com.g4l.timesheet_backend.services;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -210,16 +212,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public <T extends User> T createUser(T user) {
-        // Set<Role> roles = new HashSet<>();
+        if (getUser(user.getUserName(), user.getIdNumber(), user.getEmail()) != null) {
+            return null;
+        }
 
+        Set<AccountRole> roles = new HashSet<>();
+        roles.add(AccountRole.UNVERIFIED);
+        
+        user.setAccountRoles(roles);
         user.setAccountStatus(AccountStatus.UNVERIFIED);
         user.setDateCreated(LocalDateTime.now());
         user.setDateModified(LocalDateTime.now());
         user.setPassword(passwordEncoder.encode("NOT_SET"));
-
-        // roles.add(userAuthoritiesRepository.findByAuthority("ROLE_UNVERIFIED"));
-        // user.setAuthorities(roles);
-
         return user;
     }
 }
