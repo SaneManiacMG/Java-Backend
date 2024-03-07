@@ -32,39 +32,55 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public ManagerResponse createManager(UserRequest userRequest) {
+    public Object createManager(UserRequest userRequest) {
         Manager manager = userMapper.userRequestToManager(userRequest);
+
+        if (userService.getUser(userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail()) != null)
+            return "User already exists";
 
         manager.setId(SequenceGenerator.generateSequence(SequenceType.MANAGER_ID));
         manager = (Manager) userService.createUser(manager);
 
-        managerRepository.save(manager);
+        try {
+            managerRepository.save(manager);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        
 
         return userMapper.managerToUserResponse(manager);
     }
 
     @Override
-    public ManagerResponse updateManager(UserRequest userRequest) {
+    public Object updateManager(UserRequest userRequest) {
         Manager recordToUpdate = (Manager) userService.getUser(
             userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail());
 
         recordToUpdate = (Manager) userService.updateUserDetails(recordToUpdate, userRequest);
 
-        managerRepository.save(recordToUpdate);
-
+        try {
+            managerRepository.save(recordToUpdate);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        
         return userMapper.managerToUserResponse(recordToUpdate);
     }
 
     @Override
-    public ManagerResponse getManagerById(@NonNull String managerId) {
+    public Object getManagerById(@NonNull String managerId) {
         Manager manager = managerRepository.findById(managerId).orElse(null);
 
         return userMapper.managerToUserResponse(manager);
     }
 
     @Override
-    public String deleteManager(@NonNull String managerId) {
-        managerRepository.deleteById(managerId);
+    public Object deleteManager(@NonNull String managerId) {
+        try {
+            managerRepository.deleteById(managerId);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
 
         return "Manager with id: " + managerId + " has been deleted";
     }
@@ -78,7 +94,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public ManagerResponse getManager(@NonNull String userId) {
+    public Object getManager(@NonNull String userId) {
         Object user = userService.getUser(userId);
 
         if (user instanceof Manager)

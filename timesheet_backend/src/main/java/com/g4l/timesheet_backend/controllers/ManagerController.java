@@ -26,27 +26,27 @@ public class ManagerController {
 
     @PostMapping("/createManager")
     public ManagerResponse createManager(@RequestBody UserRequest userRequest) {
-        return managerService.createManager(userRequest);
+        return (ManagerResponse) managerService.createManager(userRequest);
     }
 
     @PutMapping("/updateManager")
     public ManagerResponse updateManager(@RequestBody UserRequest userRequest) {
-        return managerService.updateManager(userRequest);
+        return (ManagerResponse) managerService.updateManager(userRequest);
     }
 
     @GetMapping("/getManagerById/{managerId}")
     public ManagerResponse getManagerById(@PathVariable String managerId) {
-        return managerService.getManagerById(managerId);
+        return (ManagerResponse) managerService.getManagerById(managerId);
     }
 
     @GetMapping("/getManagerByUserId/{userId}")
     public ManagerResponse getManagerByUserId(@PathVariable String userId) {
-        return managerService.getManager(userId);
+        return (ManagerResponse) managerService.getManager(userId);
     }
 
     @DeleteMapping("/deleteManager/{managerId}")
     public String deleteManager(@PathVariable String managerId) {
-        return managerService.deleteManager(managerId);
+        return (String) managerService.deleteManager(managerId);
     }
 
     @GetMapping("/getAllManagers")

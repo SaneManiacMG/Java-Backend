@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public <T extends User> T updateUserDetails(T user, UserRequest request) {
-        user.setId(request.getIdNumber());
+        user.setIdNumber(request.getIdNumber());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
