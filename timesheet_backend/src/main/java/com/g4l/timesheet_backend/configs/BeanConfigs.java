@@ -7,19 +7,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.g4l.timesheet_backend.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
 public class BeanConfigs {
-
-    private final UserService userService;
-
     @Bean
     ModelMapper modelMapper() {
         return new ModelMapper();
@@ -31,15 +26,10 @@ public class BeanConfigs {
     }
 
     @Bean
-    UserDetailsService userDetailsService() {
-        return userId -> (UserDetails) userService.loadUserByUsername(userId);
-    }
-
-    @Bean
     AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 
-        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
 
         return authenticationProvider;
