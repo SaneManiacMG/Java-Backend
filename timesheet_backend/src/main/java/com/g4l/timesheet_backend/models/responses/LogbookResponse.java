@@ -14,13 +14,15 @@ public class LogbookResponse extends LogbookSubmissionRequest {
     public LogbookStatus status;
     public String statusDescription;
     public String managerId;
+    public int totalHours;
 
     public LogbookResponse(String consultantId, int week, int monday, int tuesday, int wednesday, int thursday,
             int friday, int saturday, int sunday, int totalHours, LogbookStatus status, String statusDescription,
             String managerId) {
-        super(consultantId, week, monday, tuesday, wednesday, thursday, friday, saturday, sunday, totalHours);
+        super(consultantId, week, monday, tuesday, wednesday, thursday, friday, saturday, sunday);
         this.status = status;
         this.statusDescription = statusDescription;
         this.managerId = managerId;
+        this.totalHours = totalHours;
     }
 }

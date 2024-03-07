@@ -24,14 +24,19 @@ public class ClientTeam {
     @Id
     @Column(name = "team_id")
     private String id;
+
     @Column(name = "team_name", unique = true, nullable = false)
     private String teamName;
+
     @Column(name = "client_id")
     private String clientId;
+
     @Column(name = "manager_id")
     private String managerId;
+
     @Column(name = "date_created")
     LocalDateTime dateCreated;
+    
     @Column(name = "date_modified")
     LocalDateTime dateModified;
 }

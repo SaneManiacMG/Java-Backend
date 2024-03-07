@@ -17,5 +17,4 @@ public class LogbookSubmissionRequest {
     public int friday;
     public int saturday;
     public int sunday;
-    public int totalHours;
 }
