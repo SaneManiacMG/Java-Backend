@@ -1,4 +1,4 @@
-package com.g4l.timesheet_backend.security;
+package com.g4l.timesheet_backend.configs.security;
 
 import java.security.Key;
 import java.util.Date;

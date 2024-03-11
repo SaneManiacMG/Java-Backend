@@ -8,7 +8,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.g4l.timesheet_backend.security.JwtAuthenticationFilter;
+
+import com.g4l.timesheet_backend.configs.security.JwtAuthenticationFilter;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
