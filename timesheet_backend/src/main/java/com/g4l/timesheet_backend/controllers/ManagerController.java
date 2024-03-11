@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.g4l.timesheet_backend.interfaces.ManagerService;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.models.responses.ManagerResponse;
+import com.g4l.timesheet_backend.utils.mappers.http.UserResponseMapper;
 
 @RestController
 @RequestMapping("/managers")
@@ -25,28 +26,28 @@ public class ManagerController {
     }
 
     @PostMapping("/createManager")
-    public ManagerResponse createManager(@RequestBody UserRequest userRequest) {
-        return (ManagerResponse) managerService.createManager(userRequest);
+    public Object createManager(@RequestBody UserRequest userRequest) {
+        return UserResponseMapper.mapUserResponse(managerService.createManager(userRequest));
     }
 
     @PutMapping("/updateManager")
-    public ManagerResponse updateManager(@RequestBody UserRequest userRequest) {
-        return (ManagerResponse) managerService.updateManager(userRequest);
+    public Object updateManager(@RequestBody UserRequest userRequest) {
+        return UserResponseMapper.mapUserResponse(managerService.updateManager(userRequest));
     }
 
     @GetMapping("/getManagerById/{managerId}")
-    public ManagerResponse getManagerById(@PathVariable String managerId) {
-        return (ManagerResponse) managerService.getManagerById(managerId);
+    public Object getManagerById(@PathVariable String managerId) {
+        return UserResponseMapper.mapUserResponse(managerService.getManagerById(managerId));
     }
 
     @GetMapping("/getManagerByUserId/{userId}")
-    public ManagerResponse getManagerByUserId(@PathVariable String userId) {
-        return (ManagerResponse) managerService.getManager(userId);
+    public Object getManagerByUserId(@PathVariable String userId) {
+        return UserResponseMapper.mapUserResponse(managerService.getManager(userId));
     }
 
     @DeleteMapping("/deleteManager/{managerId}")
-    public String deleteManager(@PathVariable String managerId) {
-        return (String) managerService.deleteManager(managerId);
+    public Object deleteManager(@PathVariable String managerId) {
+        return UserResponseMapper.mapUserResponse(managerService.deleteManager(managerId));
     }
 
     @GetMapping("/getAllManagers")

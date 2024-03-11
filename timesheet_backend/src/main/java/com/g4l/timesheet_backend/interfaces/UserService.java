@@ -17,4 +17,5 @@ public interface UserService {
     public Object removeAccountType(String userId, AccountRole accountType);
     public Object changeAccountStatus(String userId, AccountStatus accountStatus);
     public Object loadUserByUsername(String username);
+    public boolean doesUserExist(String username, String idNumber, String email);
 }

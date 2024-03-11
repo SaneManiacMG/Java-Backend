@@ -15,12 +15,6 @@ import lombok.NonNull;
 
 @Service
 public class ManagerServiceImpl implements ManagerService {
-    // TODO: handle null responses, currently not handled
-    // TODO: broken mapper (to confirm where exactly)
-    // TODO: handle more exception such as exception handling (currently not user friendly)
-    // TODO: update not working at all
-    // TODO: updating throwing DataIntegrityViolationException
-
     private final ManagerRepository managerRepository;
     private final UserService userService;
     private final UserMapper userMapper;
@@ -31,12 +25,10 @@ public class ManagerServiceImpl implements ManagerService {
         this.userService = userService;
     }
 
+    @SuppressWarnings("null")
     @Override
     public Object createManager(UserRequest userRequest) {
         Manager manager = userMapper.userRequestToManager(userRequest);
-
-        if (userService.getUser(userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail()) != null)
-            return "User already exists";
 
         manager.setId(SequenceGenerator.generateSequence(SequenceType.MANAGER_ID));
         manager = (Manager) userService.createUser(manager);
@@ -44,24 +36,28 @@ public class ManagerServiceImpl implements ManagerService {
         try {
             managerRepository.save(manager);
         } catch (Exception e) {
-            return e.getMessage();
+            return e;
         }
         
 
         return userMapper.managerToUserResponse(manager);
     }
 
+    @SuppressWarnings("null")
     @Override
     public Object updateManager(UserRequest userRequest) {
         Manager recordToUpdate = (Manager) userService.getUser(
             userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail());
+
+        if (recordToUpdate == null)
+            return null;
 
         recordToUpdate = (Manager) userService.updateUserDetails(recordToUpdate, userRequest);
 
         try {
             managerRepository.save(recordToUpdate);
         } catch (Exception e) {
-            return e.getMessage();
+            return e;
         }
         
         return userMapper.managerToUserResponse(recordToUpdate);
@@ -95,10 +91,10 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Object getManager(@NonNull String userId) {
-        Object user = userService.getUser(userId);
+        Object manager = (Manager) userService.getUser(userId);
 
-        if (user instanceof Manager)
-            return userMapper.managerToUserResponse((Manager) user);
+        if (manager != null)
+            return userMapper.managerToUserResponse((Manager) manager);
 
         return null;
     }

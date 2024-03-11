@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.g4l.timesheet_backend.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
+import com.g4l.timesheet_backend.utils.mappers.http.UserResponseMapper;
 
 @RestController
 @RequestMapping("/consultants")
@@ -25,23 +26,23 @@ public class ConsultantController {
     }
 
     @PostMapping("/createConsultant")
-    public ConsultantResponse createConsultant(@RequestBody UserRequest userRequest) {
-        return consultantService.createConsultant(userRequest);
+    public Object createConsultant(@RequestBody UserRequest userRequest) {
+        return UserResponseMapper.mapUserResponse(consultantService.createConsultant(userRequest));
     }
 
     @PutMapping("/updateConsultant")
-    public ConsultantResponse updateConsultant(@RequestBody UserRequest userRequest) {
-        return consultantService.updateConsultant(userRequest);
+    public Object updateConsultant(@RequestBody UserRequest userRequest) {
+        return UserResponseMapper.mapUserResponse(consultantService.updateConsultant(userRequest));
     }
 
     @GetMapping("/getConsultantById/{consultantId}")
-    public ConsultantResponse getConsultantById(@PathVariable String consultantId) {
-        return consultantService.getConsultantById(consultantId);
+    public Object getConsultantById(@PathVariable String consultantId) {
+        return UserResponseMapper.mapUserResponse(consultantService.getConsultantById(consultantId));
     }
 
     @GetMapping("/getConsultant/{userId}")
-    public ConsultantResponse getConsultantByEmail(@PathVariable String userId) {
-        return consultantService.getConsultant(userId);
+    public Object getConsultantByEmail(@PathVariable String userId) {
+        return UserResponseMapper.mapUserResponse(consultantService.getConsultant(userId));
     }
 
     @GetMapping("/getAllConsultants")
@@ -50,13 +51,12 @@ public class ConsultantController {
     }
 
     @DeleteMapping("/deleteConsultant/{consultantId}")
-    public String deleteConsultant(@PathVariable String consultantId) {
-        consultantService.deleteConsultant(consultantId);
-        return "Consultant deleted";
+    public Object deleteConsultant(@PathVariable String consultantId) {
+        return UserResponseMapper.mapUserResponse(consultantService.deleteConsultant(consultantId));
     }
 
     @PutMapping("/assignConsultantToClientTeam/{consultantId}/to/{clientTeamId}")
-    public ConsultantResponse assignConsultantToClientTeam(@PathVariable String consultantId, @PathVariable String clientTeamId) {
-        return consultantService.assignConsultantToClientTeam(consultantId, clientTeamId);
+    public Object assignConsultantToClientTeam(@PathVariable String consultantId, @PathVariable String clientTeamId) {
+        return UserResponseMapper.mapUserResponse(consultantService.assignConsultantToClientTeam(consultantId, clientTeamId));
     }
 }

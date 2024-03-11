@@ -28,6 +28,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // TODO: Handle null responses
+
     public Object getUser(String userId) {
         // String cellPhoneNumberPattern = "^\\d{10}$";
         String idNumberPattern = "^\\d{13}$";

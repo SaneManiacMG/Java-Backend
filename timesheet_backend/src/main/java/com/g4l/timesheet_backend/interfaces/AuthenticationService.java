@@ -8,5 +8,6 @@ public interface AuthenticationService {
     public Object login(AuthRequest authRequest);
     public Object resetPassword(PasswordRequest passwordRequest);
     public Object changePassword(PasswordRequest passwordRequest);
-    public Object changeAccountType(String userId, AccountRole accountType);
+    public Object addAccountType(String userId, AccountRole accountType);
+    public Object removeAccountType(String userId, AccountRole accountType);
 }

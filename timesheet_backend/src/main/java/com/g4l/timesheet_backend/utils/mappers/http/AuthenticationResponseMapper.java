@@ -1,6 +1,5 @@
 package com.g4l.timesheet_backend.utils.mappers.http;
 
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

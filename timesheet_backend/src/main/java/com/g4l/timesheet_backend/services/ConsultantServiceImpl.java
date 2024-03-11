@@ -23,44 +23,53 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    @SuppressWarnings("null")
     @Override
-    public ConsultantResponse createConsultant(UserRequest userRequest) {
+    public Object createConsultant(UserRequest userRequest) {
         Consultant consultant = userMapper.userRequestToConsultant(userRequest);
 
         consultant.setId(SequenceGenerator.generateSequence(SequenceType.CONSULTANT_ID));
-
         consultant = (Consultant) userService.createUser(consultant);
 
-        consultantRepository.save(consultant);
+        try {
+            consultantRepository.save(consultant);
+        } catch (Exception e) {
+            return e;
+        }
 
         return userMapper.consultantToUserResponse(consultant);
     }
 
+    @SuppressWarnings("null")
     @Override
-    public ConsultantResponse updateConsultant(UserRequest userRequest) {
-        Consultant consultant = (Consultant) userService.getUser(userRequest.getUserName(),
-                userRequest.getIdNumber(),
-                userRequest.getEmail());
+    public Object updateConsultant(UserRequest userRequest) {
+        Consultant recordToUpdate = (Consultant) userService.getUser(
+            userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail());
 
-        if (consultant == null)
+        if (recordToUpdate == null)
             return null;
 
-        consultant = (Consultant) userService.updateUserDetails(consultant, userRequest);
+        recordToUpdate = (Consultant) userService.updateUserDetails(recordToUpdate, userRequest);
 
-        consultantRepository.save(consultant);
+        try {
+            consultantRepository.save(recordToUpdate);
+        } catch (Exception e) {
+            return e;
+        
+        }
 
-        return userMapper.consultantToUserResponse(consultant);
+        return userMapper.consultantToUserResponse(recordToUpdate);
     }
 
     @Override
-    public ConsultantResponse getConsultantById(@NonNull String consultantId) {
+    public Object getConsultantById(@NonNull String consultantId) {
         Consultant consultant = consultantRepository.findById(consultantId).orElse(null);
 
         return userMapper.consultantToUserResponse(consultant);
     }
 
     @Override
-    public ConsultantResponse getConsultant(@NonNull String userId) {
+    public Object getConsultant(@NonNull String userId) {
         Consultant consultant = (Consultant) userService.getUser(userId);
         if (consultant != null)
             return userMapper.consultantToUserResponse(consultant);
@@ -83,7 +92,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     @Override
-    public ConsultantResponse assignConsultantToClientTeam(@NonNull String consultantId, @NonNull String clientTeamId) {
+    public Object assignConsultantToClientTeam(@NonNull String consultantId, @NonNull String clientTeamId) {
         Consultant consultant = consultantRepository.findById(consultantId).orElse(null);
 
         if (consultant == null)
