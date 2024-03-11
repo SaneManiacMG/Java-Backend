@@ -19,6 +19,9 @@ public class LogbookServiceImpl implements LogbookService {
     private final LogbookRepository logbookRepository;
     private final LogbookMapper logbookMapper;
 
+    // TODO: Assign manager
+    // TODO: Set default status
+
     public LogbookServiceImpl(LogbookRepository logbookRepository, LogbookMapper logbookMapper) {
         this.logbookRepository = logbookRepository;
         this.logbookMapper = logbookMapper;
