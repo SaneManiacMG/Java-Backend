@@ -1,9 +1,9 @@
-package com.g4l.timesheet_backend.services;
+package com.g4l.timesheet_backend.services.implementations;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import com.g4l.timesheet_backend.interfaces.ClientService;
+
 import com.g4l.timesheet_backend.models.entities.Client;
 import com.g4l.timesheet_backend.models.entities.ClientTeam;
 import com.g4l.timesheet_backend.models.enums.SequenceType;
@@ -13,6 +13,7 @@ import com.g4l.timesheet_backend.models.responses.ClientResponse;
 import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 import com.g4l.timesheet_backend.repositories.ClientRepository;
 import com.g4l.timesheet_backend.repositories.ClientTeamRepository;
+import com.g4l.timesheet_backend.services.interfaces.ClientService;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.ClientMapper;
 

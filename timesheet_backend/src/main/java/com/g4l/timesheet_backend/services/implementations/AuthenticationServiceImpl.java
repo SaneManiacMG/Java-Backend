@@ -1,4 +1,4 @@
-package com.g4l.timesheet_backend.services;
+package com.g4l.timesheet_backend.services.implementations;
 
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import lombok.RequiredArgsConstructor;
@@ -6,13 +6,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import com.g4l.timesheet_backend.configs.security.JwtService;
-import com.g4l.timesheet_backend.interfaces.AuthenticationService;
-import com.g4l.timesheet_backend.interfaces.UserService;
 import com.g4l.timesheet_backend.models.enums.AccountRole;
 import com.g4l.timesheet_backend.models.requests.AuthRequest;
 import com.g4l.timesheet_backend.models.responses.AuthResponse;
+import com.g4l.timesheet_backend.services.interfaces.AuthenticationService;
+import com.g4l.timesheet_backend.services.interfaces.UserService;
 
 @Service
 @RequiredArgsConstructor
