@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (user != null) {
             user.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
             user.setDateModified(LocalDateTime.now());
-    
+
             return saveUser((User) user);
         }
 
@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (user == null)
             return null;
 
-        if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword())) 
+        if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword()))
             return resetPassword(passwordRequest, user);
         else
             return "Password does not match current password";
@@ -185,11 +185,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return null;
     }
 
-    private User updateAccountStatus(User user, AccountStatus accountStatus) {
+    private Object updateAccountStatus(User user, AccountStatus accountStatus) {
         user.setAccountStatus(accountStatus);
         user.setDateModified(LocalDateTime.now());
 
-        saveUser(user);
+        try {
+            saveUser(user);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
 
         return null;
     }
@@ -198,13 +202,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setDateModified(LocalDateTime.now());
 
         if (user instanceof Consultant) {
-            consultantRepository.save((Consultant) user);
-            return user;
+            Consultant consultant = (Consultant) user;
+            consultantRepository.save(consultant);
+            return consultant;
         }
 
         if (user instanceof Manager) {
-            managerRepository.save((Manager) user);
-            return user;
+            Manager manager = (Manager) user;
+            managerRepository.save(manager);
+            return manager;
         }
 
         return null;
@@ -212,18 +218,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public <T extends User> T createUser(T user) {
-        if (getUser(user.getUserName(), user.getIdNumber(), user.getEmail()) != null) {
-            return null;
-        }
+        doesUserExist(user.getUserName(), user.getIdNumber(), user.getEmail());
 
         Set<AccountRole> roles = new HashSet<>();
         roles.add(AccountRole.UNVERIFIED);
-        
+
         user.setAccountRoles(roles);
         user.setAccountStatus(AccountStatus.UNVERIFIED);
         user.setDateCreated(LocalDateTime.now());
         user.setDateModified(LocalDateTime.now());
         user.setPassword(passwordEncoder.encode("NOT_SET"));
         return user;
+    }
+
+    @Override
+    public boolean doesUserExist(String userName, String idNumber, String email) {
+        if (getUser(userName, idNumber, email) != null)
+            return true;
+        else
+            return false;
     }
 }
