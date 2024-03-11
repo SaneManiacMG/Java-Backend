@@ -13,9 +13,9 @@ public interface UserService {
     public <T extends User> T updateUserDetails(T user, UserRequest request);
     public Object resetPassword(PasswordRequest passwordRequest, User user);
     public Object changePassword(PasswordRequest passwordRequest);
-    public Object addAccountType(String userId, AccountRole accountType);
-    public Object removeAccountType(String userId, AccountRole accountType);
+    public Object updateAuthorities(User user, AccountRole accountType, boolean add);
     public Object changeAccountStatus(String userId, AccountStatus accountStatus);
     public Object loadUserByUsername(String username);
     public boolean doesUserExist(String username, String idNumber, String email);
+    public Object getRoles(String userId);
 }

@@ -10,4 +10,5 @@ public interface AuthenticationService {
     public Object changePassword(PasswordRequest passwordRequest);
     public Object addAccountType(String userId, AccountRole accountType);
     public Object removeAccountType(String userId, AccountRole accountType);
+    public Object viewAccountTypes(String userId);
 }

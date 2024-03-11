@@ -4,6 +4,7 @@ import com.g4l.timesheet_backend.models.enums.AccountRole;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import com.g4l.timesheet_backend.services.interfaces.AuthenticationService;
 import com.g4l.timesheet_backend.utils.mappers.http.AuthenticationResponseMapper;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,4 +43,13 @@ public class AuthController {
         return authenticationService.addAccountType(userId, accountType);
     }
 
+    @PutMapping("/removeAccountType/{accountType}/from/{userId}")
+    public Object removeAccountType(@RequestParam String userId, @RequestParam AccountRole accountType) {
+        return authenticationService.removeAccountType(userId, accountType);
+    }
+
+    @GetMapping("/viewAccountTypes/{userId}")
+    public Object viewAccountTypes(@RequestParam String userId) {
+        return authenticationService.viewAccountTypes(userId);
+    }
 }

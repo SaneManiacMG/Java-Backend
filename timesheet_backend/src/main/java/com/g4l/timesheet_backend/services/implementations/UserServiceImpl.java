@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.entities.User;
@@ -107,7 +106,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             user.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
             user.setDateModified(LocalDateTime.now());
 
-            return saveUser((User) user);
+            saveUser((User) user);
+            return "Password reset successfully";
         }
 
         if (getUser(passwordRequest.getUserId()) != null)
@@ -140,35 +140,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Object addAccountType(String userId, AccountRole accountType) {
-        Object user = getUser(userId);
-
-        if (user == null)
-            return null;
-
-        if (user instanceof Consultant) {
-            return updateAuthorities((Consultant) user, accountType, false);
+    public Object updateAuthorities(User user, AccountRole accountType, boolean remove) {
+        if (remove) {
+            user.getAccountRoles().remove(accountType);
+        } else {
+            user.getAccountRoles().add(accountType);
         }
 
-        if (user instanceof Manager) {
-            return updateAuthorities((Manager) user, accountType, false);
+        user.setDateModified(LocalDateTime.now());
+
+        try {
+            return saveUser(user);
+        } catch (Exception e) {
+            return e;
         }
-
-        return null;
-    }
-
-    @Override
-    public Object removeAccountType(String userId, AccountRole accountType) {
-        Object user = getUser(userId);
-
-        if (user != null)
-            return saveUser((User) user);
-
-        return null;
-    }
-
-    private User updateAuthorities(User user, AccountRole accountType, boolean remove) {
-        return null;
     }
 
     @Override
@@ -196,7 +181,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         try {
             saveUser(user);
         } catch (Exception e) {
-            return e.getMessage();
+            return e;
         }
 
         return null;
@@ -241,5 +226,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return true;
         else
             return false;
+    }
+
+    @Override
+    public Object getRoles(String userId) {
+        Object user = getUser(userId);
+
+        if (user == null)
+            return null;
+
+        return ((User) user).getAccountRoles();
     }
 }

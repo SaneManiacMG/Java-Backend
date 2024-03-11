@@ -7,9 +7,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.configs.security.JwtService;
+import com.g4l.timesheet_backend.models.entities.User;
 import com.g4l.timesheet_backend.models.enums.AccountRole;
 import com.g4l.timesheet_backend.models.requests.AuthRequest;
 import com.g4l.timesheet_backend.models.responses.AuthResponse;
+import com.g4l.timesheet_backend.models.responses.RolesResponse;
 import com.g4l.timesheet_backend.services.interfaces.AuthenticationService;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
 
@@ -40,7 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Object resetPassword(PasswordRequest passwordRequest) {
         try {
-            return (String) userService.resetPassword(passwordRequest, null);
+            return userService.resetPassword(passwordRequest, null);
         } catch (Exception e) {
             return e;
         }
@@ -50,7 +52,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Object changePassword(PasswordRequest passwordRequest) {
         try {
-            return (String) userService.changePassword(passwordRequest);
+            return userService.changePassword(passwordRequest);
         } catch (Exception e) {
             return e;
         }
@@ -58,13 +60,35 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Object addAccountType(String userId, AccountRole accountType) {
+        Object user = userService.getUser(userId);
 
-        return null;
+        if (user == null)
+            return null;
+
+        user = userService.updateAuthorities((User) user, accountType, false);
+
+        return new RolesResponse(userId, ((User) user).getAccountRoles());
     }
 
     @Override
     public Object removeAccountType(String userId, AccountRole accountType) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeAccountType'");
+        Object user = userService.getUser(userId);
+
+        if (user == null)
+            return null;
+
+        user = userService.updateAuthorities((User) user, accountType, true);
+
+        return new RolesResponse(userId, ((User) user).getAccountRoles());
+    }
+
+    @Override
+    public Object viewAccountTypes(String userId) {
+        Object user = userService.getUser(userId);
+
+        if (user == null)
+            return null;
+
+        return new RolesResponse(userId, ((User) user).getAccountRoles());
     }
 }

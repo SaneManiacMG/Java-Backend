@@ -2,7 +2,6 @@ package com.g4l.timesheet_backend.services.implementations;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
-
 import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.enums.SequenceType;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
