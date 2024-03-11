@@ -1,4 +1,4 @@
-package com.g4l.timesheet_backend.interfaces;
+package com.g4l.timesheet_backend.services.interfaces;
 
 import java.util.List;
 import com.g4l.timesheet_backend.models.requests.ClientRequest;

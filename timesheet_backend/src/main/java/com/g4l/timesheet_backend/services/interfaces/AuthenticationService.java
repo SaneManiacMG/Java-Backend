@@ -1,4 +1,4 @@
-package com.g4l.timesheet_backend.interfaces;
+package com.g4l.timesheet_backend.services.interfaces;
 
 import com.g4l.timesheet_backend.models.enums.AccountRole;
 import com.g4l.timesheet_backend.models.requests.AuthRequest;

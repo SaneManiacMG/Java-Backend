@@ -1,4 +1,4 @@
-package com.g4l.timesheet_backend.services;
+package com.g4l.timesheet_backend.services.implementations;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.g4l.timesheet_backend.interfaces.UserService;
+
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.entities.User;
@@ -19,6 +19,8 @@ import com.g4l.timesheet_backend.models.enums.AccountRole;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
+import com.g4l.timesheet_backend.services.interfaces.UserService;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

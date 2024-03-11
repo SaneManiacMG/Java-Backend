@@ -1,14 +1,15 @@
-package com.g4l.timesheet_backend.services;
+package com.g4l.timesheet_backend.services.implementations;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
-import com.g4l.timesheet_backend.interfaces.ManagerService;
-import com.g4l.timesheet_backend.interfaces.UserService;
+
 import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.enums.SequenceType;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.models.responses.ManagerResponse;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
+import com.g4l.timesheet_backend.services.interfaces.ManagerService;
+import com.g4l.timesheet_backend.services.interfaces.UserService;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 import lombok.NonNull;

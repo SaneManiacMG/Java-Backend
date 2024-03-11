@@ -1,14 +1,15 @@
-package com.g4l.timesheet_backend.services;
+package com.g4l.timesheet_backend.services.implementations;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import com.g4l.timesheet_backend.interfaces.LogbookService;
+
 import com.g4l.timesheet_backend.models.entities.Logbook;
 import com.g4l.timesheet_backend.models.requests.LogbookHandleRequest;
 import com.g4l.timesheet_backend.models.requests.LogbookSubmissionRequest;
 import com.g4l.timesheet_backend.models.responses.LogbookResponse;
 import com.g4l.timesheet_backend.repositories.LogbookRepository;
+import com.g4l.timesheet_backend.services.interfaces.LogbookService;
 import com.g4l.timesheet_backend.utils.mappers.models.LogbookMapper;
 
 import lombok.NonNull;
