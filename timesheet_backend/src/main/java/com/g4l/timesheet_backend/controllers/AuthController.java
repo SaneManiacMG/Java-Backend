@@ -2,6 +2,7 @@ package com.g4l.timesheet_backend.controllers;
 
 import com.g4l.timesheet_backend.models.enums.AccountRole;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
+import com.g4l.timesheet_backend.utils.mappers.http.AuthenticationResponseMapper;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,22 +23,22 @@ public class AuthController {
 
     @PostMapping("/login")
     public Object login(@RequestBody AuthRequest authRequest) {
-        return authenticationService.login(authRequest);
+        return AuthenticationResponseMapper.mapAuthResponse(authenticationService.login(authRequest));
     }
 
     @PutMapping("/resetPassword")
-    public String setPassword(@RequestBody PasswordRequest passwordRequest) {
-        return (String) authenticationService.resetPassword(passwordRequest);
+    public Object setPassword(@RequestBody PasswordRequest passwordRequest) {
+        return authenticationService.resetPassword(passwordRequest);
     }
 
     @PutMapping("/changePassword")
-    public String changePassword(@RequestBody PasswordRequest passwordRequest) {
-        return (String) authenticationService.changePassword(passwordRequest);
+    public Object changePassword(@RequestBody PasswordRequest passwordRequest) {
+        return authenticationService.changePassword(passwordRequest);
     }
 
     @PutMapping("/addAccountType/{accountType}/to/{userId}")
-    public String addAccountType(@RequestParam String userId, @RequestParam AccountRole accountType) {
-        return (String) authenticationService.changeAccountType(userId, accountType);
+    public Object addAccountType(@RequestParam String userId, @RequestParam AccountRole accountType) {
+        return authenticationService.addAccountType(userId, accountType);
     }
 
 }

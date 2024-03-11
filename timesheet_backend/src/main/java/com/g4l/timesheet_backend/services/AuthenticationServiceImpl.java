@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.interfaces.AuthenticationService;
 import com.g4l.timesheet_backend.interfaces.UserService;
@@ -33,26 +32,39 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     authRequest.getPassword()));
             String token = jwtService.generateToken((UserDetails) user);
             return new AuthResponse(token);
-        } catch (UsernameNotFoundException unfe) {
-            return unfe.getMessage();
         } catch (Exception e) {
-            return e.getMessage();
+            return e;
         }
     }
 
     @Override
     public Object resetPassword(PasswordRequest passwordRequest) {
-        return userService.resetPassword(passwordRequest, null);
+        try {
+            return (String) userService.resetPassword(passwordRequest, null);
+        } catch (Exception e) {
+            return e;
+        }
+        
     }
 
     @Override
     public Object changePassword(PasswordRequest passwordRequest) {
-        return userService.changePassword(passwordRequest);
+        try {
+            return (String) userService.changePassword(passwordRequest);
+        } catch (Exception e) {
+            return e;
+        }
     }
 
     @Override
-    public Object changeAccountType(String userId, AccountRole accountType) {
+    public Object addAccountType(String userId, AccountRole accountType) {
 
         return null;
+    }
+
+    @Override
+    public Object removeAccountType(String userId, AccountRole accountType) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeAccountType'");
     }
 }
