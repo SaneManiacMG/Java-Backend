@@ -54,13 +54,10 @@ public class ConsultantServiceImpl implements ConsultantService {
         recordToUpdate = (Consultant) userService.updateUserDetails(recordToUpdate, userRequest);
 
         try {
-            consultantRepository.save(recordToUpdate);
+            return consultantRepository.save(recordToUpdate);
         } catch (Exception e) {
             return e;
-        
         }
-
-        return recordToUpdate;
     }
 
     @Override
@@ -78,17 +75,21 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     @Override
-    public String deleteConsultant(@NonNull String consultantId) {
-        consultantRepository.deleteById(consultantId);
-        return "Consultant with consultant id " + consultantId + " deleted";
+    public Object deleteConsultant(@NonNull String consultantId) {
+        try {
+            consultantRepository.deleteById(consultantId);
+            return "Consultant with consultant id " + consultantId + " deleted";
+        } catch (Exception e) {
+            return e;
+        }
+        
+        
     }
 
     @Override
     public List<ConsultantResponse> getAllConsultants() {
-        List<ConsultantResponse> consultantResponses = consultantRepository.findAll().stream()
+        return consultantRepository.findAll().stream()
                 .map(consultant -> userMapper.consultantToUserResponse(consultant)).toList();
-
-        return consultantResponses;
     }
 
     @Override
@@ -101,7 +102,12 @@ public class ConsultantServiceImpl implements ConsultantService {
         consultant.setClientTeamId(clientTeamId);
         consultant.setDateModified(LocalDateTime.now());
 
-        return consultantRepository.save(consultant);
+        try {
+            return consultantRepository.save(consultant);
+        } catch (Exception e) {
+            return e;
+        }
+        
     }
 
     @Override

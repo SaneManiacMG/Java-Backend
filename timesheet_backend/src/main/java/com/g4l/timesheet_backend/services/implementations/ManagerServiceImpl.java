@@ -67,11 +67,10 @@ public class ManagerServiceImpl implements ManagerService {
     public Object deleteManager(@NonNull String managerId) {
         try {
             managerRepository.deleteById(managerId);
+            return "Manager with id: " + managerId + " has been deleted";
         } catch (Exception e) {
             return e;
         }
-
-        return "Manager with id: " + managerId + " has been deleted";
     }
 
     @Override
