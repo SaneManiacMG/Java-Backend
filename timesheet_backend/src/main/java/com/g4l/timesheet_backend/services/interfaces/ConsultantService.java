@@ -12,4 +12,5 @@ public interface ConsultantService {
     public Object deleteConsultant(String consultantId);
     public List<ConsultantResponse> getAllConsultants();
     public Object assignConsultantToClientTeam(String consultantId, String clientTeamId);
+    public Object getManagerForConsultant(String consultantId);
 }

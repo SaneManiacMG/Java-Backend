@@ -4,43 +4,63 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Logbook;
+import com.g4l.timesheet_backend.models.entities.Manager;
+import com.g4l.timesheet_backend.models.enums.LogbookStatus;
+import com.g4l.timesheet_backend.models.enums.SequenceType;
 import com.g4l.timesheet_backend.models.requests.LogbookHandleRequest;
 import com.g4l.timesheet_backend.models.requests.LogbookSubmissionRequest;
 import com.g4l.timesheet_backend.models.responses.LogbookResponse;
 import com.g4l.timesheet_backend.repositories.LogbookRepository;
+import com.g4l.timesheet_backend.services.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.services.interfaces.LogbookService;
+import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.LogbookMapper;
-
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class LogbookServiceImpl implements LogbookService {
     private final LogbookRepository logbookRepository;
     private final LogbookMapper logbookMapper;
+    private final ConsultantService consultantService;
 
     // TODO: Assign manager
     // TODO: Set default status
 
-    public LogbookServiceImpl(LogbookRepository logbookRepository, LogbookMapper logbookMapper) {
-        this.logbookRepository = logbookRepository;
-        this.logbookMapper = logbookMapper;
-    }
-
     @Override
-    public LogbookResponse createLogbook(LogbookSubmissionRequest logbookSubmission) {
-        Logbook logbook = logbookMapper.logbookSubmissionRequestToLogbook(logbookSubmission);
+    public Object createLogbook(LogbookSubmissionRequest logbookSubmission) {
+        if (consultantService.getConsultant(logbookSubmission.getConsultantId()) == null) {
+            return null;
+        }
 
+        Consultant consultant = (Consultant) consultantService.getConsultant(logbookSubmission.getConsultantId());
+
+        Manager manager = (Manager) consultantService.getManagerForConsultant(logbookSubmission.getConsultantId());
+
+        if (manager == null) {
+            return null;
+        }
+
+        Logbook logbook = logbookMapper.logbookSubmissionRequestToLogbook(logbookSubmission);
+        logbook.setId(SequenceGenerator.generateSequence(SequenceType.LOGBOOK_ID));
+        logbook.setConsultant(consultant);
+        logbook.setManager(manager);
+        logbook.setStatus(LogbookStatus.PENDING);
         logbook.setDateCreated(LocalDateTime.now());
         logbook.setDateModified(LocalDateTime.now());
 
-        logbookRepository.save(logbook);
-
-        return logbookMapper.logbookToLogbookResponse(logbook);
+        try {
+            return logbookRepository.save(logbook);
+        } catch (Exception e) {
+            return e;
+        }
     }
 
     @Override
-    public LogbookResponse updateLogbook(LogbookSubmissionRequest logbookSubmission) {
+    public Object updateLogbook(LogbookSubmissionRequest logbookSubmission) {
         Logbook logbook = logbookMapper.logbookSubmissionRequestToLogbook(logbookSubmission);
         logbook.setDateModified(LocalDateTime.now());
         logbookRepository.save(logbook);
@@ -48,7 +68,7 @@ public class LogbookServiceImpl implements LogbookService {
     }
 
     @Override
-    public LogbookResponse getLogbookById(@NonNull String logbookId) {
+    public Object getLogbookById(@NonNull String logbookId) {
         Logbook logbook = logbookRepository.findById(logbookId).orElse(null);
         if (logbook == null)
             return null;
@@ -69,7 +89,7 @@ public class LogbookServiceImpl implements LogbookService {
     }
 
     @Override
-    public String deleteLogbook(@NonNull String logbookId) {
+    public Object deleteLogbook(@NonNull String logbookId) {
         logbookRepository.deleteById(logbookId);
         return "Logbook deleted";
     }
@@ -99,11 +119,10 @@ public class LogbookServiceImpl implements LogbookService {
     }
 
     @Override
-    public LogbookResponse handleLogbookSubmission(LogbookHandleRequest logbookHandleRequest) {
+    public Object handleLogbookSubmission(LogbookHandleRequest logbookHandleRequest) {
         @SuppressWarnings("null")
         Logbook logbook = logbookRepository.findById(logbookHandleRequest.logbookId).orElse(null);
 
         return logbookMapper.logbookToLogbookResponse(logbook);
     }
-
 }

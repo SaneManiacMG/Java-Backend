@@ -19,7 +19,6 @@ import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
-
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -3,12 +3,14 @@ package com.g4l.timesheet_backend.services.implementations;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
-
 import com.g4l.timesheet_backend.models.entities.Consultant;
+import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.enums.SequenceType;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
+import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
+import com.g4l.timesheet_backend.services.interfaces.ClientService;
 import com.g4l.timesheet_backend.services.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
@@ -23,6 +25,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final ConsultantRepository consultantRepository;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final ClientService clientService;
 
     @SuppressWarnings("null")
     @Override
@@ -106,5 +109,22 @@ public class ConsultantServiceImpl implements ConsultantService {
 
         return userMapper.consultantToUserResponse(consultant);
     }
+
+    @Override
+    public Object getManagerForConsultant(String consultantId) {
+        if (userService.getUser(consultantId) == null) 
+            return null;
+
+        Consultant consultant = (Consultant) userService.getUser(consultantId);
+
+        if (clientService.getClientTeamById(consultant.getClientTeamId()) == null)
+            return null;
+
+        ClientTeamResponse clientTeam =  clientService.getClientTeamById(consultant.getClientTeamId());
+        
+        return (Manager) userService.getUser(clientTeam.getManagerId());
+    }
+
+    
 
 }
