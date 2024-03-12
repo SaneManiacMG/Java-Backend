@@ -34,13 +34,10 @@ public class ManagerServiceImpl implements ManagerService {
         manager = (Manager) userService.createUser(manager);
 
         try {
-            managerRepository.save(manager);
+            return managerRepository.save(manager);
         } catch (Exception e) {
             return e;
         }
-        
-
-        return userMapper.managerToUserResponse(manager);
     }
 
     @SuppressWarnings("null")
@@ -55,19 +52,15 @@ public class ManagerServiceImpl implements ManagerService {
         recordToUpdate = (Manager) userService.updateUserDetails(recordToUpdate, userRequest);
 
         try {
-            managerRepository.save(recordToUpdate);
+            return managerRepository.save(recordToUpdate);
         } catch (Exception e) {
             return e;
         }
-        
-        return userMapper.managerToUserResponse(recordToUpdate);
     }
 
     @Override
     public Object getManagerById(@NonNull String managerId) {
-        Manager manager = managerRepository.findById(managerId).orElse(null);
-
-        return userMapper.managerToUserResponse(manager);
+        return managerRepository.findById(managerId).orElse(null);
     }
 
     @Override
@@ -75,7 +68,7 @@ public class ManagerServiceImpl implements ManagerService {
         try {
             managerRepository.deleteById(managerId);
         } catch (Exception e) {
-            return e.getMessage();
+            return e;
         }
 
         return "Manager with id: " + managerId + " has been deleted";
@@ -83,10 +76,8 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public List<ManagerResponse> getAllManagers() {
-        List<ManagerResponse> managerResponses = managerRepository.findAll().stream()
+        return managerRepository.findAll().stream()
                 .map(manager -> userMapper.managerToUserResponse(manager)).toList();
-
-        return managerResponses;
     }
 
     @Override
