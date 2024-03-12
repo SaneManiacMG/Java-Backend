@@ -3,13 +3,13 @@ package com.g4l.timesheet_backend.utils.mappers.http;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.User;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 import lombok.RequiredArgsConstructor;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class UserResponseMapper {
     private final UserMapper userMapper;
