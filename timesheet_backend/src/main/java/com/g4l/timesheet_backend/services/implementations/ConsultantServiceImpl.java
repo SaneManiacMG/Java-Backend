@@ -118,7 +118,4 @@ public class ConsultantServiceImpl implements ConsultantService {
         
         return (Manager) userService.getUser(clientTeam.getManagerId());
     }
-
-    
-
 }

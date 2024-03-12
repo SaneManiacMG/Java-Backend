@@ -3,11 +3,20 @@ package com.g4l.timesheet_backend.utils.mappers.http;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import com.g4l.timesheet_backend.models.entities.Consultant;
+import com.g4l.timesheet_backend.models.entities.User;
+import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
+import lombok.RequiredArgsConstructor;
 
+@Component
+@RequiredArgsConstructor
 public class UserResponseMapper {
-    public static ResponseEntity<Object> mapUserResponse(Object response) {
+    private final UserMapper userMapper;
+
+    public ResponseEntity<Object> mapUserResponse(Object response) {
         if (response == null)
-            return new ResponseEntity<>("User Details not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User details not found", HttpStatus.NOT_FOUND);
 
         if (response instanceof Exception)
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -17,6 +26,10 @@ public class UserResponseMapper {
 
         if (response instanceof String)
             return new ResponseEntity<>(response, HttpStatus.OK);
+
+        if (response instanceof User)
+            return new ResponseEntity<>(userMapper.consultantToUserResponse((Consultant) response),
+                    HttpStatus.OK);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
