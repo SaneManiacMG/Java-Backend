@@ -9,19 +9,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.g4l.timesheet_backend.models.requests.ClientTeamRequest;
 import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 import com.g4l.timesheet_backend.services.interfaces.ClientService;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/clientTeams")
 public class ClientTeamController {
-    private ClientService clientService;
-    
-    public ClientTeamController(@RequestBody ClientService clientService) {
-        this.clientService = clientService;
-    }
+    private final ClientService clientService;
 
     @PostMapping("/createClientTeam")
     public ClientTeamResponse createClientTeam(@RequestBody ClientTeamRequest clientTeamRequest) {

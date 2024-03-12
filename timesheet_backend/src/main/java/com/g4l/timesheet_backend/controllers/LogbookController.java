@@ -9,19 +9,17 @@ import com.g4l.timesheet_backend.models.requests.LogbookHandleRequest;
 import com.g4l.timesheet_backend.models.requests.LogbookSubmissionRequest;
 import com.g4l.timesheet_backend.models.responses.LogbookResponse;
 import com.g4l.timesheet_backend.services.interfaces.LogbookService;
+import lombok.RequiredArgsConstructor;
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/logbooks")
 public class LogbookController {
-    private LogbookService logbookService; 
-
-    public LogbookController(LogbookService logbookService) {
-        this.logbookService = logbookService;
-    }
+    private final LogbookService logbookService; 
 
     @PostMapping("/createLogbook")
     public Object createLogbook(@RequestBody LogbookSubmissionRequest logbook) {

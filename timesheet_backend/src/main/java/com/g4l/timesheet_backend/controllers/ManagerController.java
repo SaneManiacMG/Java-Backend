@@ -9,22 +9,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.models.responses.ManagerResponse;
 import com.g4l.timesheet_backend.services.interfaces.ManagerService;
 import com.g4l.timesheet_backend.utils.mappers.http.UserResponseMapper;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/managers")
 public class ManagerController {
-    
-    private ManagerService managerService;
-
-    public ManagerController(ManagerService managerService) {
-        this.managerService = managerService;
-        
-    }
+    private final ManagerService managerService;
 
     @PostMapping("/createManager")
     public Object createManager(@RequestBody UserRequest userRequest) {

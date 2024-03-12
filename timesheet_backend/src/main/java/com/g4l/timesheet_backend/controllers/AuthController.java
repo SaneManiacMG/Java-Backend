@@ -4,6 +4,7 @@ import com.g4l.timesheet_backend.models.enums.AccountRole;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import com.g4l.timesheet_backend.services.interfaces.AuthenticationService;
 import com.g4l.timesheet_backend.utils.mappers.http.AuthenticationResponseMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,13 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.g4l.timesheet_backend.models.requests.AuthRequest;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthenticationService authenticationService;
-
-    public AuthController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
 
     @PostMapping("/login")
     public Object login(@RequestBody AuthRequest authRequest) {
