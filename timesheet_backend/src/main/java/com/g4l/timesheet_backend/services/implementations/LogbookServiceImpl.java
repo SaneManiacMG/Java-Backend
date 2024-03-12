@@ -38,6 +38,10 @@ public class LogbookServiceImpl implements LogbookService {
 
         Consultant consultant = (Consultant) consultantService.getConsultant(logbookSubmission.getConsultantId());
 
+        if (consultant.getClientTeamId() == null) {
+            return null;
+        }
+
         Manager manager = (Manager) consultantService.getManagerForConsultant(logbookSubmission.getConsultantId());
 
         if (manager == null) {
@@ -64,7 +68,7 @@ public class LogbookServiceImpl implements LogbookService {
         Logbook logbook = logbookMapper.logbookSubmissionRequestToLogbook(logbookSubmission);
         logbook.setDateModified(LocalDateTime.now());
         logbookRepository.save(logbook);
-        return logbookMapper.logbookToLogbookResponse(logbook);
+        return logbook;
     }
 
     @Override
@@ -72,20 +76,14 @@ public class LogbookServiceImpl implements LogbookService {
         Logbook logbook = logbookRepository.findById(logbookId).orElse(null);
         if (logbook == null)
             return null;
-        
-        return logbookMapper.logbookToLogbookResponse(logbook);
+
+        return logbook;
     }
 
-    @SuppressWarnings("null")
     @Override
     public List<LogbookResponse> getAllLogbooks() {
-        List<Logbook> logbooks = logbookRepository.findAll();
-        List<LogbookResponse> logbookResponses = null;
-
-        for (Logbook logbook : logbooks) {
-            logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
-        }
-        return logbookResponses;
+        return logbookRepository.findAll().stream()
+                .map(logbook -> logbookMapper.logbookToLogbookResponse(logbook)).toList();
     }
 
     @Override

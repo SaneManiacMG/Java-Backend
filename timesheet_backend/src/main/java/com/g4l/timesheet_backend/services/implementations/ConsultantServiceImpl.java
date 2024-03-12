@@ -3,11 +3,11 @@ package com.g4l.timesheet_backend.services.implementations;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import com.g4l.timesheet_backend.models.entities.ClientTeam;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.enums.SequenceType;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
-import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.services.interfaces.ClientService;
@@ -120,8 +120,8 @@ public class ConsultantServiceImpl implements ConsultantService {
         if (clientService.getClientTeamById(consultant.getClientTeamId()) == null)
             return null;
 
-        ClientTeamResponse clientTeam =  clientService.getClientTeamById(consultant.getClientTeamId());
-        
+        ClientTeam clientTeam = (ClientTeam) clientService.getClientTeamById(consultant.getClientTeamId());
+
         return (Manager) userService.getUser(clientTeam.getManagerId());
     }
 }
