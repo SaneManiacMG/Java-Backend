@@ -36,12 +36,10 @@ public class ConsultantServiceImpl implements ConsultantService {
         consultant = (Consultant) userService.createUser(consultant);
 
         try {
-            consultantRepository.save(consultant);
+            return consultantRepository.save(consultant);
         } catch (Exception e) {
             return e;
         }
-
-        return userMapper.consultantToUserResponse(consultant);
     }
 
     @SuppressWarnings("null")
@@ -62,21 +60,19 @@ public class ConsultantServiceImpl implements ConsultantService {
         
         }
 
-        return userMapper.consultantToUserResponse(recordToUpdate);
+        return recordToUpdate;
     }
 
     @Override
     public Object getConsultantById(@NonNull String consultantId) {
-        Consultant consultant = consultantRepository.findById(consultantId).orElse(null);
-
-        return userMapper.consultantToUserResponse(consultant);
+        return consultantRepository.findById(consultantId).orElse(null);
     }
 
     @Override
     public Object getConsultant(@NonNull String userId) {
         Consultant consultant = (Consultant) userService.getUser(userId);
         if (consultant != null)
-            return userMapper.consultantToUserResponse(consultant);
+            return consultant;
 
         return null;
     }
@@ -105,9 +101,7 @@ public class ConsultantServiceImpl implements ConsultantService {
         consultant.setClientTeamId(clientTeamId);
         consultant.setDateModified(LocalDateTime.now());
 
-        consultantRepository.save(consultant);
-
-        return userMapper.consultantToUserResponse(consultant);
+        return consultantRepository.save(consultant);
     }
 
     @Override
