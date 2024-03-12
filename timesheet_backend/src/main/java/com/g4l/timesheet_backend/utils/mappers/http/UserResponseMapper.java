@@ -19,7 +19,7 @@ public class UserResponseMapper {
             return new ResponseEntity<>("User details not found", HttpStatus.NOT_FOUND);
 
         if (response instanceof Exception)
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(((Exception)response).getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         if (response instanceof List)
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);

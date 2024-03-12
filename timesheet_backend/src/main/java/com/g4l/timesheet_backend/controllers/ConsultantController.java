@@ -56,4 +56,9 @@ public class ConsultantController {
     public ResponseEntity<Object> assignConsultantToClientTeam(@PathVariable String consultantId, @PathVariable String clientTeamId) {
         return userResponseMapper.mapUserResponse(consultantService.assignConsultantToClientTeam(consultantId, clientTeamId));
     }
+
+    @GetMapping("/getManagerForConsultant/{consultantId}")
+    public ResponseEntity<Object> getManagerForConsultant(@PathVariable String consultantId) {
+        return userResponseMapper.mapUserResponse(consultantService.getManagerForConsultant(consultantId));
+    }
 }

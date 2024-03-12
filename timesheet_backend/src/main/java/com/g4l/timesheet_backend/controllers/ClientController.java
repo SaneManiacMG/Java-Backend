@@ -1,6 +1,7 @@
 package com.g4l.timesheet_backend.controllers;
 
-import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.g4l.timesheet_backend.models.requests.ClientRequest;
-import com.g4l.timesheet_backend.models.responses.ClientResponse;
 import com.g4l.timesheet_backend.services.interfaces.ClientService;
+import com.g4l.timesheet_backend.utils.mappers.http.ClientResponseMapper;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -19,29 +20,30 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/clients")
 public class ClientController {
     private final ClientService clientService;
+    private final ClientResponseMapper clientResponseMapper;
 
     @PostMapping("/createClient/{clientName}")
-    public ClientResponse createClient(@PathVariable String clientName) {
-        return clientService.createClient(clientName);
+    public ResponseEntity<Object> createClient(@PathVariable String clientName) {
+        return clientResponseMapper.mapClientResponse(clientService.createClient(clientName));
     }
     
     @PutMapping("/updateClient")
-    public ClientResponse updateClient(@RequestBody ClientRequest clientRequest) {
-        return clientService.updateClient(clientRequest);
+    public ResponseEntity<Object> updateClient(@RequestBody ClientRequest clientRequest) {
+        return clientResponseMapper.mapClientResponse(clientService.updateClient(clientRequest));
     }
 
     @GetMapping("/getAllClients")
-    public List<ClientResponse> getAllClients() {
-        return clientService.getAllClients();
+    public ResponseEntity<Object> getAllClients() {
+        return new ResponseEntity<>(clientService.getAllClients(), HttpStatus.OK);
     }
 
     @GetMapping("/getClientById/{clientId}")
-    public ClientResponse getClientById(String clientId) {
-        return clientService.getClientById(clientId);
+    public ResponseEntity<Object> getClientById(String clientId) {
+        return clientResponseMapper.mapClientResponse(clientService.getClientById(clientId));
     }
 
     @DeleteMapping("/deleteClient/{clientId}")
-    public String deleteClient(String clientId) {
-        return clientService.deleteClient(clientId);
+    public ResponseEntity<Object> deleteClient(String clientId) {
+        return clientResponseMapper.mapClientResponse(clientService.deleteClient(clientId));
     }
 }

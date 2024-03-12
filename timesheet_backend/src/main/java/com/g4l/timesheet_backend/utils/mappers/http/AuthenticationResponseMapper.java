@@ -12,7 +12,7 @@ public class AuthenticationResponseMapper {
             return new ResponseEntity<>("Invalid Username/Password", HttpStatus.UNAUTHORIZED);
 
         if (response instanceof Exception)
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(((Exception)response).getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         if (response instanceof String)
             return new ResponseEntity<>(response, HttpStatus.OK);

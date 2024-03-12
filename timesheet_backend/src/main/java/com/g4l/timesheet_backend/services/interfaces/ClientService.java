@@ -7,14 +7,14 @@ import com.g4l.timesheet_backend.models.responses.ClientResponse;
 import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 
 public interface ClientService {
-    public ClientResponse createClient(String clientRequest);
-    public ClientResponse updateClient(ClientRequest clientRequest);
-    public ClientResponse getClientById(String clientId);
-    public ClientTeamResponse createClientTeam(ClientTeamRequest clientTeam);
-    public ClientTeamResponse updateClientTeam(ClientTeamRequest clientTeam);
-    public ClientTeamResponse getClientTeamById(String clientTeamId);
-    public String deleteClient(String clientId);
-    public String deleteClientTeam(String clientTeamId);
+    public Object createClient(String clientRequest);
+    public Object updateClient(ClientRequest clientRequest);
+    public Object getClientById(String clientId);
+    public Object createClientTeam(ClientTeamRequest clientTeam);
+    public Object updateClientTeam(ClientTeamRequest clientTeam);
+    public Object getClientTeamById(String clientTeamId);
+    public Object deleteClient(String clientId);
+    public Object deleteClientTeam(String clientTeamId);
     public List<ClientTeamResponse> getAllClientTeams();
     public List<ClientResponse> getAllClients();
 }
