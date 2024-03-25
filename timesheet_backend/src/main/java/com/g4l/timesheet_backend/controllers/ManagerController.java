@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.g4l.timesheet_backend.models.requests.ClientTeamAssignment;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.services.interfaces.ManagerService;
+import com.g4l.timesheet_backend.utils.mappers.http.LogbookResponseMapper;
 import com.g4l.timesheet_backend.utils.mappers.http.UserResponseMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class ManagerController {
     private final ManagerService managerService;
     private final UserResponseMapper userResponseMapper;
+    private final LogbookResponseMapper logbookResponseMapper;
 
     @PostMapping("/createManager")
     public ResponseEntity<Object> createManager(@RequestBody UserRequest userRequest) {
@@ -50,5 +53,11 @@ public class ManagerController {
     @GetMapping("/getAllManagers")
     public ResponseEntity<Object> getAllManagers() {
         return new ResponseEntity<>(managerService.getAllManagers(), HttpStatus.OK);
+    }
+
+    @PutMapping("/assignTeamToManager")
+    public ResponseEntity<Object> assignTeamToManager(@RequestBody ClientTeamAssignment clientTeamAssignment) {
+        return logbookResponseMapper.mapLogbookResponse(managerService.assignTeamToManager(
+            clientTeamAssignment.getManagerId(), clientTeamAssignment.getTeamId()));
     }
 }

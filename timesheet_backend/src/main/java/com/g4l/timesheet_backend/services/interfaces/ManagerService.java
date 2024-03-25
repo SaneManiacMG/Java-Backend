@@ -11,4 +11,5 @@ public interface ManagerService {
     public Object getManager(String userId);
     public Object deleteManager(String managerId);
     public List<ManagerResponse> getAllManagers();
+    public Object assignTeamToManager(String managerId, String teamId);
 }
