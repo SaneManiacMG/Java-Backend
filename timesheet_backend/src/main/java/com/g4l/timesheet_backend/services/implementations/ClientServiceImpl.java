@@ -13,6 +13,7 @@ import com.g4l.timesheet_backend.models.responses.ClientTeamResponse;
 import com.g4l.timesheet_backend.repositories.ClientRepository;
 import com.g4l.timesheet_backend.repositories.ClientTeamRepository;
 import com.g4l.timesheet_backend.services.interfaces.ClientService;
+import com.g4l.timesheet_backend.services.interfaces.ManagerService;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
 import com.g4l.timesheet_backend.utils.mappers.models.ClientMapper;
 import lombok.NonNull;
@@ -25,6 +26,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
     private final ClientTeamRepository clientTeamRepository;
     private final ClientMapper clientMapper;
+    private final ManagerService managerService;
 
     @Override
     public Object createClient(String clientName) {
@@ -71,12 +73,13 @@ public class ClientServiceImpl implements ClientService {
         clientTeam.setDateCreated(LocalDateTime.now());
         clientTeam.setDateModified(LocalDateTime.now());
 
+        managerService.assignTeamToManager(clientTeamRequest.getManagerId(), clientTeam.getId());
+
         try {
             return clientTeamRepository.save(clientTeam);
         } catch (Exception e) {
             return e;
         }
-
     }
 
     @Override
@@ -129,6 +132,19 @@ public class ClientServiceImpl implements ClientService {
     public List<ClientResponse> getAllClients() {
         return clientRepository.findAll().stream()
                 .map(client -> clientMapper.clientToClientResponse(client)).toList();
+    }
+
+    @Override
+    public Object assignTeamToManager(String managerId, String teamId) {
+        if (getClientTeamById(teamId) == null) {
+            return null;
+        }
+
+        if(managerService.assignTeamToManager(managerId, teamId) == null) {
+            return null;
+        }   
+
+        return (Object) managerService.assignTeamToManager(managerId, teamId);
     }
 
 }

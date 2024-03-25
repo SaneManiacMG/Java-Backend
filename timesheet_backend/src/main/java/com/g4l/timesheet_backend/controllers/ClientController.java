@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.g4l.timesheet_backend.models.requests.ClientRequest;
+import com.g4l.timesheet_backend.models.requests.ClientTeamRequest;
 import com.g4l.timesheet_backend.services.interfaces.ClientService;
 import com.g4l.timesheet_backend.utils.mappers.http.ClientResponseMapper;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +46,30 @@ public class ClientController {
     @DeleteMapping("/deleteClient/{clientId}")
     public ResponseEntity<Object> deleteClient(String clientId) {
         return clientResponseMapper.mapClientResponse(clientService.deleteClient(clientId));
+    }
+
+    @PostMapping("/createClientTeam")
+    public ResponseEntity<Object> createClientTeam(@RequestBody ClientTeamRequest clientTeamRequest) {
+        return clientResponseMapper.mapClientResponse(clientService.createClientTeam(clientTeamRequest));
+    }
+
+    @PutMapping("/updateClientTeam")
+    public ResponseEntity<Object> updateClientTeam(@RequestBody ClientTeamRequest clientTeam) {
+        return clientResponseMapper.mapClientResponse(clientService.updateClientTeam(clientTeam));
+    }
+
+    @GetMapping("/getAllClientTeams")
+    public ResponseEntity<Object> getAllClientTeams() {
+        return clientResponseMapper.mapClientResponse(clientService.getAllClientTeams());
+    }
+
+    @GetMapping("/getClientTeamById")
+    public ResponseEntity<Object> getClientTeamById(String clientTeamId) {
+        return clientResponseMapper.mapClientResponse(clientService.getClientTeamById(clientTeamId));
+    }
+
+    @DeleteMapping("/deleteClientTeam")
+    public ResponseEntity<Object> deleteClientTeam(String clientTeamId) {
+        return clientResponseMapper.mapClientResponse(clientService.deleteClientTeam(clientTeamId));
     }
 }

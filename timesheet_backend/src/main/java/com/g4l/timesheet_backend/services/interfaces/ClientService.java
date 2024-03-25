@@ -17,4 +17,5 @@ public interface ClientService {
     public Object deleteClientTeam(String clientTeamId);
     public List<ClientTeamResponse> getAllClientTeams();
     public List<ClientResponse> getAllClients();
+    public Object assignTeamToManager(String managerId, String teamId);
 }

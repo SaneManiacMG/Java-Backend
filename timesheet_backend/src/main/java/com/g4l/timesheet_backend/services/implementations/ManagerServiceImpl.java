@@ -10,7 +10,6 @@ import com.g4l.timesheet_backend.models.enums.SequenceType;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.models.responses.ManagerResponse;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
-import com.g4l.timesheet_backend.services.interfaces.ClientService;
 import com.g4l.timesheet_backend.services.interfaces.ManagerService;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
@@ -24,7 +23,6 @@ public class ManagerServiceImpl implements ManagerService {
     private final ManagerRepository managerRepository;
     private final UserService userService;
     private final UserMapper userMapper;
-    private final ClientService clientService;
 
     @SuppressWarnings("null")
     @Override
@@ -97,10 +95,6 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
         Manager manager = managerRepository.findById(managerId).orElse(null);
-
-        if (clientService.getClientTeamById(teamId) == null) {
-            return null;
-        }
 
         Set<String> teams = new HashSet<>();
         if (manager.getClientTeams() != null) teams = manager.getClientTeams();
