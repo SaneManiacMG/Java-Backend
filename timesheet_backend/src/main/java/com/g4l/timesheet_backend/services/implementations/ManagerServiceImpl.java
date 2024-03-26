@@ -1,10 +1,12 @@
 package com.g4l.timesheet_backend.services.implementations;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.springframework.stereotype.Service;
+import com.g4l.timesheet_backend.models.entities.ClientTeam;
 import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.enums.SequenceType;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
@@ -27,6 +29,8 @@ public class ManagerServiceImpl implements ManagerService {
     @SuppressWarnings("null")
     @Override
     public Object createManager(UserRequest userRequest) {
+        // TODO: Check if user exists in DB
+
         Manager manager = userMapper.userRequestToManager(userRequest);
 
         manager.setId(SequenceGenerator.generateSequence(SequenceType.MANAGER_ID));
@@ -42,6 +46,8 @@ public class ManagerServiceImpl implements ManagerService {
     @SuppressWarnings("null")
     @Override
     public Object updateManager(UserRequest userRequest) {
+        // TODO: Check if user exists in DB
+
         Manager recordToUpdate = (Manager) userService.getUser(
             userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail());
 
@@ -64,6 +70,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Object deleteManager(@NonNull String managerId) {
+        // TODO: Check if user exists in DB
         try {
             managerRepository.deleteById(managerId);
             return "Manager with id: " + managerId + " has been deleted";
@@ -80,10 +87,10 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Object getManager(@NonNull String userId) {
-        Object manager = (Manager) userService.getUser(userId);
+        Manager manager = (Manager) userService.getUser(userId);
 
         if (manager != null)
-            return userMapper.managerToUserResponse((Manager) manager);
+            return manager;
 
         return null;
     }
@@ -108,6 +115,23 @@ public class ManagerServiceImpl implements ManagerService {
         } catch (Exception e) {
             return e;
         }
+    }
+
+    @Override
+    public List<ClientTeam> getManagedTeams(@NonNull String managerId) {
+        Manager manager = managerRepository.findById(managerId).orElse(null);
+
+        if (manager == null) return null;
+
+        List<ClientTeam> clientTeams = new ArrayList<>();
+
+        if (manager.getClientTeams() == null) return null;
+
+        for (String teamId : manager.getClientTeams()) {
+            clientTeams.add((ClientTeam) userService.getUser(teamId));
+        }
+
+        return clientTeams;
     }
 
 }

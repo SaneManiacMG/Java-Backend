@@ -72,4 +72,14 @@ public class ClientController {
     public ResponseEntity<Object> deleteClientTeam(String clientTeamId) {
         return clientResponseMapper.mapClientResponse(clientService.deleteClientTeam(clientTeamId));
     }
+
+    @PutMapping("/assignTeamToManager")
+    public ResponseEntity<Object> assignTeamToManager(String managerId, String teamId) {
+        return clientResponseMapper.mapClientResponse(clientService.assignTeamToManager(managerId, teamId));
+    }
+
+    @PutMapping("/assignConsultantToTeam")
+    public ResponseEntity<Object> assignConsultantToTeam(String consultantId, String teamId) {
+        return clientResponseMapper.mapClientResponse(clientService.assignConsultantToTeam(consultantId, teamId));
+    }
 }
