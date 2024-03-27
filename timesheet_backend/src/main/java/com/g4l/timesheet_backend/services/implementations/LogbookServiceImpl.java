@@ -3,7 +3,7 @@ package com.g4l.timesheet_backend.services.implementations;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
-
+import com.g4l.timesheet_backend.models.entities.ClientTeam;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Logbook;
 import com.g4l.timesheet_backend.models.entities.Manager;
@@ -13,9 +13,14 @@ import com.g4l.timesheet_backend.models.requests.LogbookHandleRequest;
 import com.g4l.timesheet_backend.models.requests.LogbookSubmissionRequest;
 import com.g4l.timesheet_backend.models.responses.LogbookResponse;
 import com.g4l.timesheet_backend.repositories.LogbookRepository;
+import com.g4l.timesheet_backend.services.interfaces.ClientService;
 import com.g4l.timesheet_backend.services.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.services.interfaces.LogbookService;
+import com.g4l.timesheet_backend.services.interfaces.ManagerService;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
+import com.g4l.timesheet_backend.utils.exceptions.generic.ValueNotProvidedException;
+import com.g4l.timesheet_backend.utils.exceptions.logbook.LogbookDetailsNotFoundException;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.mappers.models.LogbookMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -26,32 +31,28 @@ public class LogbookServiceImpl implements LogbookService {
     private final LogbookRepository logbookRepository;
     private final LogbookMapper logbookMapper;
     private final ConsultantService consultantService;
-
-    // TODO: Assign manager
-    // TODO: Set default status
+    private final ClientService clientService;
+    private final ManagerService managerService;
 
     @Override
     public Object createLogbook(LogbookSubmissionRequest logbookSubmission) {
-        if (consultantService.getConsultant(logbookSubmission.getConsultantId()) == null) {
-            return null;
-        }
-
         Consultant consultant = (Consultant) consultantService.getConsultant(logbookSubmission.getConsultantId());
 
-        if (consultant.getClientTeamId() == null) {
-            return null;
-        }
+        if (consultantService.getConsultant(logbookSubmission.getConsultantId()) == null)
+            throw new UserDetailsNotFoundException(logbookSubmission.getConsultantId());
+        if (consultant.getClientTeamId() == null)
+            throw new ValueNotProvidedException(consultant.getId());
 
-        Manager manager = (Manager) consultantService.getManagerForConsultant(logbookSubmission.getConsultantId());
+        if (lookbookExistsForWeek(logbookSubmission.getWeekNumber(), logbookSubmission.getConsultantId()))
+            throw new LogbookDetailsNotFoundException(logbookSubmission.getConsultantId(),
+                    logbookSubmission.getWeekNumber());
 
-        if (manager == null) {
-            return null;
-        }
+        ClientTeam clientTeam = clientService.getClientTeamById(consultant.getClientTeamId());
 
         Logbook logbook = logbookMapper.logbookSubmissionRequestToLogbook(logbookSubmission);
         logbook.setId(SequenceGenerator.generateSequence(SequenceType.LOGBOOK_ID));
         logbook.setConsultant(consultant);
-        logbook.setManager(manager);
+        logbook.setManager((Manager) managerService.getManagerById(clientTeam.getManagerId()));
         logbook.setStatus(LogbookStatus.PENDING);
         logbook.setDateCreated(LocalDateTime.now());
         logbook.setDateModified(LocalDateTime.now());
@@ -65,17 +66,34 @@ public class LogbookServiceImpl implements LogbookService {
 
     @Override
     public Object updateLogbook(LogbookSubmissionRequest logbookSubmission) {
-        Logbook logbook = logbookMapper.logbookSubmissionRequestToLogbook(logbookSubmission);
+        Logbook logbook = logbookRepository.findLogbookByConsultantIdAndWeekNumber(
+                logbookSubmission.consultantId, logbookSubmission.weekNumber);
+
+        if (logbook == null)
+            throw new LogbookDetailsNotFoundException(logbookSubmission.consultantId, logbookSubmission.weekNumber);
+
+        logbook.setMonday(logbookSubmission.monday);
+        logbook.setTuesday(logbookSubmission.tuesday);
+        logbook.setWednesday(logbookSubmission.wednesday);
+        logbook.setThursday(logbookSubmission.thursday);
+        logbook.setFriday(logbookSubmission.friday);
+        logbook.setSaturday(logbookSubmission.saturday);
+        logbook.setSunday(logbookSubmission.sunday);
+
         logbook.setDateModified(LocalDateTime.now());
-        logbookRepository.save(logbook);
-        return logbook;
+
+        try {
+            return logbookRepository.save(logbook);
+        } catch (Exception e) {
+            return e;
+        }
     }
 
     @Override
-    public Object getLogbookById(@NonNull String logbookId) {
+    public Logbook getLogbookById(@NonNull String logbookId) {
         Logbook logbook = logbookRepository.findById(logbookId).orElse(null);
         if (logbook == null)
-            return null;
+            throw new LogbookDetailsNotFoundException(logbookId);
 
         return logbook;
     }
@@ -88,15 +106,21 @@ public class LogbookServiceImpl implements LogbookService {
 
     @Override
     public Object deleteLogbook(@NonNull String logbookId) {
-        logbookRepository.deleteById(logbookId);
-        return "Logbook deleted";
+        try {
+            logbookRepository.deleteById(logbookId);
+        } catch (Exception e) {
+            return e;
+        }
+
+        return "Logbook with logbook id " + logbookId + " deleted";
     }
 
     @SuppressWarnings("null")
     @Override
     public List<LogbookResponse> getLogbooksByConsultantId(String consultantId) {
-        List<Logbook> logbooks = logbookRepository.findLogbookByConsultantId(consultantId);
+        List<Logbook> logbooks = logbookRepository.findLogbooksByConsultantId(consultantId);
         List<LogbookResponse> logbookResponses = null;
+
         for (Logbook logbook : logbooks) {
             logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
         }
@@ -107,8 +131,9 @@ public class LogbookServiceImpl implements LogbookService {
     @SuppressWarnings("null")
     @Override
     public List<LogbookResponse> getLogbooksByManagerId(String managerId) {
-        List<Logbook> logbooks = logbookRepository.findLogbookByManagerId(managerId);
+        List<Logbook> logbooks = logbookRepository.findLogbooksByManagerId(managerId);
         List<LogbookResponse> logbookResponses = null;
+
         for (Logbook logbook : logbooks) {
             logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
         }
@@ -118,9 +143,24 @@ public class LogbookServiceImpl implements LogbookService {
 
     @Override
     public Object handleLogbookSubmission(LogbookHandleRequest logbookHandleRequest) {
-        @SuppressWarnings("null")
-        Logbook logbook = logbookRepository.findById(logbookHandleRequest.logbookId).orElse(null);
+        Logbook logbook = logbookRepository.findById(logbookHandleRequest.logbookId)
+                .orElseThrow(() -> new LogbookDetailsNotFoundException(logbookHandleRequest.logbookId));
 
-        return logbookMapper.logbookToLogbookResponse(logbook);
+        logbook.setStatus(logbookHandleRequest.status);
+        logbook.setDateModified(LocalDateTime.now());
+
+        try {
+            return logbookRepository.save(logbook);
+        } catch (Exception e) {
+            return e;
+        }
+    }
+
+    private boolean lookbookExistsForWeek(int weekNumber, String consultantId) {
+        if (logbookRepository.findLogbookByConsultantIdAndWeekNumber(consultantId, weekNumber) != null)
+            return true;
+
+        return false;
+
     }
 }

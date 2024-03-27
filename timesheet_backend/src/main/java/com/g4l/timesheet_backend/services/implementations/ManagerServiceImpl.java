@@ -15,6 +15,9 @@ import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.services.interfaces.ManagerService;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
+import com.g4l.timesheet_backend.utils.exceptions.client.ClientDetailsNotFoundException;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsAlreadyExistsException;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +32,9 @@ public class ManagerServiceImpl implements ManagerService {
     @SuppressWarnings("null")
     @Override
     public Object createManager(UserRequest userRequest) {
-        // TODO: Check if user exists in DB
+        if (!userService.doesUserExist(userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail()))
+            throw new UserDetailsAlreadyExistsException(userRequest.getUserName(), userRequest.getIdNumber(),
+                    userRequest.getEmail());
 
         Manager manager = userMapper.userRequestToManager(userRequest);
 
@@ -46,13 +51,12 @@ public class ManagerServiceImpl implements ManagerService {
     @SuppressWarnings("null")
     @Override
     public Object updateManager(UserRequest userRequest) {
-        // TODO: Check if user exists in DB
+        if (!userService.doesUserExist(userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail()))
+            throw new UserDetailsNotFoundException(userRequest.getUserName(), userRequest.getIdNumber(),
+                    userRequest.getEmail());
 
         Manager recordToUpdate = (Manager) userService.getUser(
-            userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail());
-
-        if (recordToUpdate == null)
-            return null;
+                userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail());
 
         recordToUpdate = (Manager) userService.updateUserDetails(recordToUpdate, userRequest);
 
@@ -64,13 +68,15 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Object getManagerById(@NonNull String managerId) {
-        return managerRepository.findById(managerId).orElse(null);
+    public Manager getManagerById(@NonNull String managerId) {
+        return managerRepository.findById(managerId).orElseThrow(() -> new UserDetailsNotFoundException(managerId));
     }
 
     @Override
     public Object deleteManager(@NonNull String managerId) {
-        // TODO: Check if user exists in DB
+        if (!userService.doesUserExist(managerId, managerId, managerId))
+            throw new UserDetailsNotFoundException(managerId);
+
         try {
             managerRepository.deleteById(managerId);
             return "Manager with id: " + managerId + " has been deleted";
@@ -86,25 +92,25 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Object getManager(@NonNull String userId) {
+    public Manager getManager(@NonNull String userId) {
         Manager manager = (Manager) userService.getUser(userId);
 
-        if (manager != null)
-            return manager;
+        if (manager == null)
+            throw new UserDetailsNotFoundException(userId);
 
-        return null;
+        return manager;
     }
 
     @Override
     public Object assignTeamToManager(@NonNull String managerId, @NonNull String teamId) {
-        if (!managerRepository.existsById(managerId)) {
-            return null;
-        }
-
-        Manager manager = managerRepository.findById(managerId).orElse(null);
+        Manager manager = managerRepository.findById(managerId)
+                .orElseThrow(() -> new UserDetailsNotFoundException(managerId));
 
         Set<String> teams = new HashSet<>();
-        if (manager.getClientTeams() != null) teams = manager.getClientTeams();
+        if (manager.getClientTeams() == null)
+            throw new ClientDetailsNotFoundException(teamId);
+
+        teams = manager.getClientTeams();
         teams.add(teamId);
 
         manager.setClientTeams(teams);
@@ -119,13 +125,13 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public List<ClientTeam> getManagedTeams(@NonNull String managerId) {
-        Manager manager = managerRepository.findById(managerId).orElse(null);
-
-        if (manager == null) return null;
+        Manager manager = managerRepository.findById(managerId)
+                .orElseThrow(() -> new UserDetailsNotFoundException(managerId));
 
         List<ClientTeam> clientTeams = new ArrayList<>();
 
-        if (manager.getClientTeams() == null) return null;
+        if (manager.getClientTeams() == null)
+            throw new ClientDetailsNotFoundException(managerId);
 
         for (String teamId : manager.getClientTeams()) {
             clientTeams.add((ClientTeam) userService.getUser(teamId));

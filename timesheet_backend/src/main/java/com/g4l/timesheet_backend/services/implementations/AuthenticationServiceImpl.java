@@ -2,6 +2,7 @@ package com.g4l.timesheet_backend.services.implementations;
 
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,7 @@ import com.g4l.timesheet_backend.models.responses.AuthResponse;
 import com.g4l.timesheet_backend.models.responses.RolesResponse;
 import com.g4l.timesheet_backend.services.interfaces.AuthenticationService;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Object user = userService.getUser(authRequest.getUserId());
 
         if (user == null)
-            return null;
+            throw new AuthenticationCredentialsNotFoundException("Credentials not found");
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUserId(),
@@ -63,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Object user = userService.getUser(userId);
 
         if (user == null)
-            return null;
+            throw new UserDetailsNotFoundException(userId);
 
         user = userService.updateAuthorities((User) user, accountType, false);
 
@@ -75,7 +77,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Object user = userService.getUser(userId);
 
         if (user == null)
-            return null;
+            throw new UserDetailsNotFoundException(userId);
 
         user = userService.updateAuthorities((User) user, accountType, true);
 
@@ -87,7 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Object user = userService.getUser(userId);
 
         if (user == null)
-            return null;
+            throw new UserDetailsNotFoundException(userId);
 
         return new RolesResponse(userId, ((User) user).getAccountRoles());
     }

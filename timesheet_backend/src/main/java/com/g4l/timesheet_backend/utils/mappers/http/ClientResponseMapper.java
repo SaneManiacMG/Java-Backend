@@ -13,13 +13,7 @@ import lombok.RequiredArgsConstructor;
 public class ClientResponseMapper {
     private final ClientMapper clientMapper;
 
-    public ResponseEntity<Object> mapClientResponse(Object response) {
-        if (response == null)
-            return new ResponseEntity<>("Client/Client Team data not found", HttpStatus.NOT_FOUND);
-
-        if (response instanceof Exception)
-            return new ResponseEntity<>(((Exception) response).getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
+    public ResponseEntity<?> mapClientResponse(Object response) {
         if (response instanceof String)
             return new ResponseEntity<>(response, HttpStatus.OK);
 
