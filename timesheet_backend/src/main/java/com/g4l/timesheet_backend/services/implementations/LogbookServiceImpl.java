@@ -48,10 +48,21 @@ public class LogbookServiceImpl implements LogbookService {
                     logbookSubmission.getWeekNumber());
 
         ClientTeam clientTeam = clientService.getClientTeamById(consultant.getClientTeamId());
+        if (consultantService.getConsultant(logbookSubmission.getConsultantId()) == null)
+            throw new UserDetailsNotFoundException(logbookSubmission.getConsultantId());
+        if (consultant.getClientTeamId() == null)
+            throw new ValueNotProvidedException(consultant.getId());
+
+        if (lookbookExistsForWeek(logbookSubmission.getWeekNumber(), logbookSubmission.getConsultantId()))
+            throw new LogbookDetailsNotFoundException(logbookSubmission.getConsultantId(),
+                    logbookSubmission.getWeekNumber());
+
+        ClientTeam clientTeam = clientService.getClientTeamById(consultant.getClientTeamId());
 
         Logbook logbook = logbookMapper.logbookSubmissionRequestToLogbook(logbookSubmission);
         logbook.setId(SequenceGenerator.generateSequence(SequenceType.LOGBOOK_ID));
         logbook.setConsultant(consultant);
+        logbook.setManager((Manager) managerService.getManagerById(clientTeam.getManagerId()));
         logbook.setManager((Manager) managerService.getManagerById(clientTeam.getManagerId()));
         logbook.setStatus(LogbookStatus.PENDING);
         logbook.setDateCreated(LocalDateTime.now());
@@ -80,7 +91,27 @@ public class LogbookServiceImpl implements LogbookService {
         logbook.setSaturday(logbookSubmission.saturday);
         logbook.setSunday(logbookSubmission.sunday);
 
+        Logbook logbook = logbookRepository.findLogbookByConsultantIdAndWeekNumber(
+                logbookSubmission.consultantId, logbookSubmission.weekNumber);
+
+        if (logbook == null)
+            throw new LogbookDetailsNotFoundException(logbookSubmission.consultantId, logbookSubmission.weekNumber);
+
+        logbook.setMonday(logbookSubmission.monday);
+        logbook.setTuesday(logbookSubmission.tuesday);
+        logbook.setWednesday(logbookSubmission.wednesday);
+        logbook.setThursday(logbookSubmission.thursday);
+        logbook.setFriday(logbookSubmission.friday);
+        logbook.setSaturday(logbookSubmission.saturday);
+        logbook.setSunday(logbookSubmission.sunday);
+
         logbook.setDateModified(LocalDateTime.now());
+
+        try {
+            return logbookRepository.save(logbook);
+        } catch (Exception e) {
+            return e;
+        }
 
         try {
             return logbookRepository.save(logbook);
@@ -91,8 +122,10 @@ public class LogbookServiceImpl implements LogbookService {
 
     @Override
     public Logbook getLogbookById(@NonNull String logbookId) {
+    public Logbook getLogbookById(@NonNull String logbookId) {
         Logbook logbook = logbookRepository.findById(logbookId).orElse(null);
         if (logbook == null)
+            throw new LogbookDetailsNotFoundException(logbookId);
             throw new LogbookDetailsNotFoundException(logbookId);
 
         return logbook;
@@ -113,13 +146,22 @@ public class LogbookServiceImpl implements LogbookService {
         }
 
         return "Logbook with logbook id " + logbookId + " deleted";
+        try {
+            logbookRepository.deleteById(logbookId);
+        } catch (Exception e) {
+            return e;
+        }
+
+        return "Logbook with logbook id " + logbookId + " deleted";
     }
 
     @SuppressWarnings("null")
     @Override
     public List<LogbookResponse> getLogbooksByConsultantId(String consultantId) {
         List<Logbook> logbooks = logbookRepository.findLogbooksByConsultantId(consultantId);
+        List<Logbook> logbooks = logbookRepository.findLogbooksByConsultantId(consultantId);
         List<LogbookResponse> logbookResponses = null;
+
 
         for (Logbook logbook : logbooks) {
             logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
@@ -132,7 +174,9 @@ public class LogbookServiceImpl implements LogbookService {
     @Override
     public List<LogbookResponse> getLogbooksByManagerId(String managerId) {
         List<Logbook> logbooks = logbookRepository.findLogbooksByManagerId(managerId);
+        List<Logbook> logbooks = logbookRepository.findLogbooksByManagerId(managerId);
         List<LogbookResponse> logbookResponses = null;
+
 
         for (Logbook logbook : logbooks) {
             logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
