@@ -19,6 +19,8 @@ import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -27,8 +29,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final ConsultantRepository consultantRepository;
     private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
-
-    // TODO: Handle null responses
 
     public Object getUser(String userId) {
         // String cellPhoneNumberPattern = "^\\d{10}$";
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return findByEmail(userId);
         }
 
-        return null;
+        throw new UserDetailsNotFoundException(userId);
     }
 
     private Object findByEmail(String email) {
@@ -56,7 +56,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return consultantRepository.findByEmail(email);
         if (managerRepository.findByEmail(email) != null)
             return managerRepository.findByEmail(email);
-        return null;
+        
+        throw new UserDetailsNotFoundException(email);
     }
 
     private Object findByUserName(String username) {
@@ -64,7 +65,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return consultantRepository.findByUserName(username);
         if (managerRepository.findByUserName(username) != null)
             return managerRepository.findByUserName(username);
-        return null;
+        
+        throw new UserDetailsNotFoundException(username);
     }
 
     private Object findByIdNumber(String idNumber) {
@@ -72,7 +74,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return consultantRepository.findByIdNumber(idNumber);
         if (managerRepository.findByIdNumber(idNumber) != null)
             return managerRepository.findByIdNumber(idNumber);
-        return null;
+
+        throw new UserDetailsNotFoundException(idNumber);
     }
 
     @Override
@@ -83,7 +86,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return getUser(idNumber);
         if (getUser(email) != null)
             return getUser(email);
-        return null;
+
+        throw new UserDetailsNotFoundException(username, idNumber, email);
     }
 
     @Override
@@ -112,7 +116,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (getUser(passwordRequest.getUserId()) != null)
             return resetPassword(passwordRequest, (User) getUser(passwordRequest.getUserId()));
 
-        return null;
+        // TODO: handle the response that comes back when user not found for auth and reset
+        throw new UsernameNotFoundException(passwordRequest.getUserId());
     }
 
     @Override
@@ -120,7 +125,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = (User) getUser(passwordRequest.getUserId());
 
         if (user == null)
-            return null;
+            throw new UsernameNotFoundException(passwordRequest.getUserId());
 
         if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword()))
             return resetPassword(passwordRequest, user);
@@ -135,7 +140,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (managerRepository.findByUserName(username) != null)
             return managerRepository.findByUserName(username);
 
-        throw new UsernameNotFoundException("User not found");
+        throw new UsernameNotFoundException("User not found for id [" + username + "]");
     }
 
     @Override
@@ -170,7 +175,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return updateAccountStatus((Manager) user, accountStatus);
         }
 
-        return null;
+        throw new IllegalArgumentException("User type not supported");
     }
 
     private Object updateAccountStatus(User user, AccountStatus accountStatus) {
@@ -178,12 +183,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setDateModified(LocalDateTime.now());
 
         try {
-            saveUser(user);
+            return saveUser(user);
         } catch (Exception e) {
             return e;
         }
-
-        return null;
     }
 
     private User saveUser(User user) {
@@ -201,7 +204,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return manager;
         }
 
-        return null;
+        throw new IllegalArgumentException("User type not supported");
     }
 
     @Override

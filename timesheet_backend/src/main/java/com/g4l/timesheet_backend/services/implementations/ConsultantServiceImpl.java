@@ -3,17 +3,16 @@ package com.g4l.timesheet_backend.services.implementations;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import com.g4l.timesheet_backend.models.entities.ClientTeam;
 import com.g4l.timesheet_backend.models.entities.Consultant;
-import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.enums.SequenceType;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
-import com.g4l.timesheet_backend.services.interfaces.ClientService;
 import com.g4l.timesheet_backend.services.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsAlreadyExistsException;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +24,13 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final ConsultantRepository consultantRepository;
     private final UserService userService;
     private final UserMapper userMapper;
-    private final ClientService clientService;
 
-    @SuppressWarnings("null")
     @Override
-    public Object createConsultant(UserRequest userRequest) {
+    public Object createConsultant(UserRequest userRequest) throws UserDetailsAlreadyExistsException {
+        if (userService.doesUserExist(userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail()))
+            throw new UserDetailsAlreadyExistsException(userRequest.getUserName(), userRequest.getIdNumber(),
+                    userRequest.getEmail());
+
         Consultant consultant = userMapper.userRequestToConsultant(userRequest);
 
         consultant.setId(SequenceGenerator.generateSequence(SequenceType.CONSULTANT_ID));
@@ -42,14 +43,14 @@ public class ConsultantServiceImpl implements ConsultantService {
         }
     }
 
-    @SuppressWarnings("null")
     @Override
-    public Object updateConsultant(UserRequest userRequest) {
+    public Object updateConsultant(UserRequest userRequest) throws UserDetailsNotFoundException {
         Consultant recordToUpdate = (Consultant) userService.getUser(
-            userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail());
+                userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail());
 
         if (recordToUpdate == null)
-            return null;
+            throw new UserDetailsNotFoundException(userRequest.getUserName(), userRequest.getIdNumber(),
+                    userRequest.getEmail());
 
         recordToUpdate = (Consultant) userService.updateUserDetails(recordToUpdate, userRequest);
 
@@ -61,29 +62,27 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     @Override
-    public Object getConsultantById(@NonNull String consultantId) {
-        return consultantRepository.findById(consultantId).orElse(null);
+    public Object getConsultantById(@NonNull String consultantId) throws UserDetailsNotFoundException {
+        return consultantRepository.findById(consultantId)
+                .orElseThrow(() -> new UserDetailsNotFoundException(consultantId));
     }
 
     @Override
-    public Object getConsultant(@NonNull String userId) {
-        Consultant consultant = (Consultant) userService.getUser(userId);
-        if (consultant != null)
-            return consultant;
-
-        return null;
+    public Consultant getConsultant(@NonNull String userId) throws UserDetailsNotFoundException {
+        return consultantRepository.findById(userId).orElseThrow(() -> new UserDetailsNotFoundException(userId));
     }
 
     @Override
-    public Object deleteConsultant(@NonNull String consultantId) {
+    public Object deleteConsultant(@NonNull String consultantId) throws UserDetailsNotFoundException {
+        if (consultantRepository.findById(consultantId).orElse(null) == null)
+            throw new UserDetailsNotFoundException(consultantId);
+
         try {
             consultantRepository.deleteById(consultantId);
             return "Consultant with consultant id " + consultantId + " deleted";
         } catch (Exception e) {
             return e;
         }
-        
-        
     }
 
     @Override
@@ -93,11 +92,13 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     @Override
-    public Object assignConsultantToClientTeam(@NonNull String consultantId, @NonNull String clientTeamId) {
-        Consultant consultant = consultantRepository.findById(consultantId).orElse(null);
+    public Object assignConsultantToClientTeam(@NonNull String consultantId, @NonNull String clientTeamId)
+            throws UserDetailsNotFoundException {
+        Consultant consultant = consultantRepository.findById(consultantId)
+                .orElseThrow(() -> new UserDetailsNotFoundException(consultantId));
 
         if (consultant == null)
-            return null;
+            throw new UserDetailsNotFoundException(consultantId);
 
         consultant.setClientTeamId(clientTeamId);
         consultant.setDateModified(LocalDateTime.now());
@@ -107,21 +108,5 @@ public class ConsultantServiceImpl implements ConsultantService {
         } catch (Exception e) {
             return e;
         }
-        
-    }
-
-    @Override
-    public Object getManagerForConsultant(String consultantId) {
-        if (userService.getUser(consultantId) == null) 
-            return null;
-
-        Consultant consultant = (Consultant) userService.getUser(consultantId);
-
-        if (clientService.getClientTeamById(consultant.getClientTeamId()) == null)
-            return null;
-
-        ClientTeam clientTeam = (ClientTeam) clientService.getClientTeamById(consultant.getClientTeamId());
-
-        return (Manager) userService.getUser(clientTeam.getManagerId());
     }
 }

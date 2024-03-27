@@ -16,6 +16,8 @@ import com.g4l.timesheet_backend.services.interfaces.ClientService;
 import com.g4l.timesheet_backend.services.interfaces.ConsultantService;
 import com.g4l.timesheet_backend.services.interfaces.ManagerService;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
+import com.g4l.timesheet_backend.utils.exceptions.client.*;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.mappers.models.ClientMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +25,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
-
-    // TODO: Figure out which level to map user based responses
-    // TODO: Figure out whether to use userId or any idenfier for user methods
-
     private final ClientRepository clientRepository;
     private final ClientTeamRepository clientTeamRepository;
     private final ClientMapper clientMapper;
@@ -36,7 +34,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Object createClient(String clientName) {
         if (getClientByName(clientName) != null)
-            return null;
+            throw new ClientDetailsAlreadyExistsExcepion(clientName);
 
         Client client = new Client();
 
@@ -56,7 +54,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Object updateClient(ClientRequest clientRequest) {
         if (getClientById(clientRequest.getId()) == null)
-            return null;
+            throw new ClientDetailsNotFoundException(clientRequest.getId());
 
         Client client = clientMapper.clientRequestToClient(clientRequest);
 
@@ -68,18 +66,16 @@ public class ClientServiceImpl implements ClientService {
         } catch (Exception e) {
             return e;
         }
-
     }
 
     @Override
-    public Object getClientById(@NonNull String clientId) {
-        return clientRepository.findById(clientId).orElse(null);
+    public Client getClientById(@NonNull String clientId) {
+        return clientRepository.findById(clientId).orElseThrow(() -> new UserDetailsNotFoundException(clientId));
     }
 
     @Override
     public Object createClientTeam(ClientTeamRequest clientTeamRequest) {
-        if (getClientTeamByName(clientTeamRequest.getTeamName()) != null)
-            return null;
+        getClientTeamByName(clientTeamRequest.getTeamName());
 
         ClientTeam clientTeam = clientMapper.clientTeamRequestToClientTeam(clientTeamRequest);
 
@@ -99,7 +95,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Object updateClientTeam(ClientTeamRequest clientTeamRequest) {
         if (getClientTeamById(clientTeamRequest.getId()) == null)
-            return null;
+            throw new ClientDetailsNotFoundException(clientTeamRequest.getId());
 
         ClientTeam clientTeam = clientMapper.clientTeamRequestToClientTeam(clientTeamRequest);
 
@@ -115,14 +111,15 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Object getClientTeamById(@NonNull String clientTeamId) {
-        return clientTeamRepository.findById(clientTeamId).orElse(null);
+    public ClientTeam getClientTeamById(@NonNull String clientTeamId) {
+        return clientTeamRepository.findById(clientTeamId)
+                .orElseThrow(() -> new UserDetailsNotFoundException(clientTeamId));
     }
 
     @Override
     public Object deleteClient(@NonNull String clientId) {
         if (getClientById(clientId) == null)
-            return null;
+            throw new UserDetailsNotFoundException(clientId);
 
         try {
             clientRepository.deleteById(clientId);
@@ -135,7 +132,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Object deleteClientTeam(@NonNull String clientTeamId) {
         if (getClientTeamById(clientTeamId) == null)
-            return null;
+            throw new UserDetailsNotFoundException(clientTeamId);
 
         try {
             clientTeamRepository.deleteById(clientTeamId);
@@ -160,7 +157,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Object assignTeamToManager(String managerId, String teamId) {
         if (getClientTeamById(teamId) == null)
-            return null;
+            throw new ClientDetailsNotFoundException(teamId);
 
         if (managerService.assignTeamToManager(managerId, teamId) == null) {
             return null;
@@ -172,21 +169,26 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Object assignConsultantToTeam(String consultantId, String teamId) {
         if (getClientTeamById(teamId) == null)
-            return null;
+            throw new ClientDetailsNotFoundException(teamId);
 
-        if (consultantService.assignConsultantToClientTeam(consultantId, teamId) != null)
-            return null;
+        consultantService.assignConsultantToClientTeam(consultantId, teamId);
 
         return "Consultant with consultant id " + consultantId + " assigned to team with team id " + teamId;
     }
 
     @Override
-    public Object getClientByName(String clientName) {
+    public Client getClientByName(String clientName) {
+        if (clientRepository.findByClientName(clientName) == null)
+            throw new ClientDetailsNotFoundException(clientName);
+
         return clientRepository.findByClientName(clientName);
     }
 
     @Override
-    public Object getClientTeamByName(String clientTeamName) {
-        return clientTeamRepository.findByClientTeamName(clientTeamName);
+    public ClientTeam getClientTeamByName(String clientTeamName) {
+        if (clientTeamRepository.findByTeamName(clientTeamName) == null)
+            throw new ClientDetailsNotFoundException(clientTeamName);
+
+        return clientTeamRepository.findByTeamName(clientTeamName);
     }
 }
