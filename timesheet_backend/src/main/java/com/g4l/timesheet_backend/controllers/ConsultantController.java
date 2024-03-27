@@ -2,16 +2,11 @@ package com.g4l.timesheet_backend.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.services.interfaces.ConsultantService;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsAlreadyExistsException;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.mappers.http.UserResponseMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -23,32 +18,34 @@ public class ConsultantController {
     private final UserResponseMapper userResponseMapper;
 
     @PostMapping("/createConsultant")
-    public ResponseEntity<Object> createConsultant(@RequestBody UserRequest userRequest) {
+    public ResponseEntity<?> createConsultant(@RequestBody UserRequest userRequest)
+            throws UserDetailsAlreadyExistsException {
         return userResponseMapper.mapUserResponse(consultantService.createConsultant(userRequest));
     }
 
     @PutMapping("/updateConsultant")
-    public ResponseEntity<Object> updateConsultant(@RequestBody UserRequest userRequest) {
+    public ResponseEntity<?> updateConsultant(@RequestBody UserRequest userRequest)
+            throws UserDetailsNotFoundException {
         return userResponseMapper.mapUserResponse(consultantService.updateConsultant(userRequest));
     }
 
     @GetMapping("/getConsultantById/{consultantId}")
-    public ResponseEntity<Object> getConsultantById(@PathVariable String consultantId) {
+    public ResponseEntity<?> getConsultantById(@PathVariable String consultantId) throws UserDetailsNotFoundException {
         return userResponseMapper.mapUserResponse(consultantService.getConsultantById(consultantId));
     }
 
     @GetMapping("/getConsultant/{userId}")
-    public ResponseEntity<Object> getConsultantByEmail(@PathVariable String userId) {
+    public ResponseEntity<?> getConsultantByEmail(@PathVariable String userId) throws UserDetailsNotFoundException {
         return userResponseMapper.mapUserResponse(consultantService.getConsultant(userId));
     }
 
     @GetMapping("/getAllConsultants")
-    public ResponseEntity<Object> getAllConsultants() {
+    public ResponseEntity<?> getAllConsultants() {
         return new ResponseEntity<>(consultantService.getAllConsultants(), HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteConsultant/{consultantId}")
-    public ResponseEntity<Object> deleteConsultant(@PathVariable String consultantId) {
+    public ResponseEntity<?> deleteConsultant(@PathVariable String consultantId) throws UserDetailsNotFoundException {
         return userResponseMapper.mapUserResponse(consultantService.deleteConsultant(consultantId));
     }
 }
