@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.models.entities.ClientTeam;
 import com.g4l.timesheet_backend.models.entities.Manager;
+import com.g4l.timesheet_backend.models.entities.User;
 import com.g4l.timesheet_backend.models.enums.SequenceType;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.models.responses.ManagerResponse;
@@ -32,7 +33,7 @@ public class ManagerServiceImpl implements ManagerService {
     @SuppressWarnings("null")
     @Override
     public Object createManager(UserRequest userRequest) {
-        if (!userService.doesUserExist(userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail()))
+        if (userService.doesUserExist(userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail()))
             throw new UserDetailsAlreadyExistsException(userRequest.getUserName(), userRequest.getIdNumber(),
                     userRequest.getEmail());
 
@@ -76,13 +77,10 @@ public class ManagerServiceImpl implements ManagerService {
     public Object deleteManager(@NonNull String managerId) {
         if (!userService.doesUserExist(managerId, managerId, managerId))
             throw new UserDetailsNotFoundException(managerId);
+        User user = (User) userService.getUser(managerId);
 
-        try {
-            managerRepository.deleteById(managerId);
-            return "Manager with id: " + managerId + " has been deleted";
-        } catch (Exception e) {
-            return e;
-        }
+        managerRepository.deleteById(user.getId());
+        return "Manager with id: " + managerId + " has been deleted";
     }
 
     @Override

@@ -19,7 +19,7 @@ import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
-import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserIdDoesNotMatchPatternsException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return findByEmail(userId);
         }
 
-        throw new UserDetailsNotFoundException(userId);
+        throw new UserIdDoesNotMatchPatternsException(userId);
     }
 
     private Object findByEmail(String email) {
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (managerRepository.findByEmail(email) != null)
             return managerRepository.findByEmail(email);
         
-        throw new UserDetailsNotFoundException(email);
+        return null;
     }
 
     private Object findByUserName(String username) {
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (managerRepository.findByUserName(username) != null)
             return managerRepository.findByUserName(username);
         
-        throw new UserDetailsNotFoundException(username);
+        return null;
     }
 
     private Object findByIdNumber(String idNumber) {
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (managerRepository.findByIdNumber(idNumber) != null)
             return managerRepository.findByIdNumber(idNumber);
 
-        throw new UserDetailsNotFoundException(idNumber);
+        return null;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (getUser(email) != null)
             return getUser(email);
 
-        throw new UserDetailsNotFoundException(username, idNumber, email);
+        return null;
     }
 
     @Override

@@ -3,10 +3,8 @@ package com.g4l.timesheet_backend.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.g4l.timesheet_backend.models.requests.ClientTeamAssignment;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.services.interfaces.ManagerService;
-import com.g4l.timesheet_backend.utils.mappers.http.LogbookResponseMapper;
 import com.g4l.timesheet_backend.utils.mappers.http.UserResponseMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -16,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 public class ManagerController {
     private final ManagerService managerService;
     private final UserResponseMapper userResponseMapper;
-    private final LogbookResponseMapper logbookResponseMapper;
 
     @PostMapping("/createManager")
     public ResponseEntity<?> createManager(@RequestBody UserRequest userRequest) {
@@ -48,9 +45,9 @@ public class ManagerController {
         return new ResponseEntity<>(managerService.getAllManagers(), HttpStatus.OK);
     }
 
-    @PutMapping("/assignTeamToManager")
-    public ResponseEntity<?> assignTeamToManager(@RequestBody ClientTeamAssignment clientTeamAssignment) {
-        return logbookResponseMapper.mapLogbookResponse(managerService.assignTeamToManager(
-            clientTeamAssignment.getManagerId(), clientTeamAssignment.getTeamId()));
-    }
+    // @PutMapping("/assignTeamToManager")
+    // public ResponseEntity<?> assignTeamToManager(@RequestBody ClientTeamAssignment clientTeamAssignment) {
+    //     return logbookResponseMapper.mapLogbookResponse(managerService.assignTeamToManager(
+    //         clientTeamAssignment.getManagerId(), clientTeamAssignment.getTeamId()));
+    // }
 }
