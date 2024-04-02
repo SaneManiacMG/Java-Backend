@@ -10,17 +10,4 @@ public class TimesheetBackendApplication {
 		SpringApplication.run(TimesheetBackendApplication.class, args);
 	}
 
-	// @Bean
-	// CommandLineRunner run(UserAuthoritiesRepository userAuthoritiesRepository) {
-	// 	return args -> {
-	// 		int numOfRoles = AccountRole.values().length;
-			
-	// 		if (userAuthoritiesRepository.count() != numOfRoles) {
-	// 			userAuthoritiesRepository.deleteAll();
-	// 			for (AccountRole accountType : AccountRole.values()) {
-	// 				userAuthoritiesRepository.save(new Role("ROLE_" + accountType.name()));
-	// 			}
-	// 		}
-	// 	};
-	// }
 }
