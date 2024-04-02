@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.configs.security.JwtService;
 import com.g4l.timesheet_backend.models.entities.User;
 import com.g4l.timesheet_backend.models.enums.AccountRole;
+import com.g4l.timesheet_backend.models.enums.AccountStatus;
 import com.g4l.timesheet_backend.models.requests.AuthRequest;
 import com.g4l.timesheet_backend.models.responses.AuthResponse;
 import com.g4l.timesheet_backend.models.responses.RolesResponse;
@@ -29,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Object user = userService.getUser(authRequest.getUserId());
 
         if (user == null)
-            throw new AuthenticationCredentialsNotFoundException("Credentials not found");
+            throw new AuthenticationCredentialsNotFoundException("Invalid username or password");
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUserId(),
@@ -48,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         } catch (Exception e) {
             return e;
         }
-        
+
     }
 
     @Override
@@ -63,9 +64,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Object addAccountType(String userId, AccountRole accountType) {
         Object user = userService.getUser(userId);
-
-        if (user == null)
-            throw new UserDetailsNotFoundException(userId);
 
         user = userService.updateAuthorities((User) user, accountType, false);
 
@@ -92,5 +90,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new UserDetailsNotFoundException(userId);
 
         return new RolesResponse(userId, ((User) user).getAccountRoles());
+    }
+
+    @Override
+    public Object getAccountStatus(String userId) {
+        User user = (User) userService.getUser(userId);
+
+        return user.getAccountStatus();
+    }
+
+    @Override
+    public Object setAccountStatus(String userId, AccountStatus status) {
+        return userService.changeAccountStatus(userId, status);
     }
 }

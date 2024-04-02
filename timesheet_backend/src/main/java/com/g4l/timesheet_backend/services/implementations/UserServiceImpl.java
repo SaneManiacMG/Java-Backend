@@ -19,6 +19,7 @@ import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.exceptions.user.UserIdDoesNotMatchPatternsException;
 
 import lombok.RequiredArgsConstructor;
@@ -116,7 +117,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (getUser(passwordRequest.getUserId()) != null)
             return resetPassword(passwordRequest, (User) getUser(passwordRequest.getUserId()));
 
-        // TODO: handle the response that comes back when user not found for auth and reset
         throw new UsernameNotFoundException(passwordRequest.getUserId());
     }
 
@@ -165,7 +165,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Object user = getUser(userId);
 
         if (user == null)
-            return null;
+            throw new UserDetailsNotFoundException(userId);
 
         if (user instanceof Consultant) {
             return updateAccountStatus((Consultant) user, accountStatus);
@@ -183,7 +183,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setDateModified(LocalDateTime.now());
 
         try {
-            return saveUser(user);
+            saveUser(user);
+            return "Account status for [" + user.getId() + "] updated successfully";
         } catch (Exception e) {
             return e;
         }

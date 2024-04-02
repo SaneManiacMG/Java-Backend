@@ -121,14 +121,12 @@ public class LogbookServiceImpl implements LogbookService {
         return "Logbook with logbook id [" + logbookId + "] deleted";
     }
 
-    @SuppressWarnings("null")
     @Override
     public List<LogbookResponse> getLogbooksByConsultantId(String consultantId) {
         return logbookRepository.findLogbooksByConsultantId(consultantId).stream()
                 .map(logbook -> logbookMapper.logbookToLogbookResponse(logbook)).toList();
     }
 
-    @SuppressWarnings("null")
     @Override
     public List<LogbookResponse> getLogbooksByManagerId(String managerId) {
         return logbookRepository.findLogbooksByManagerId(managerId).stream()

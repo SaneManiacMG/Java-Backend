@@ -1,6 +1,7 @@
 package com.g4l.timesheet_backend.services.interfaces;
 
 import com.g4l.timesheet_backend.models.enums.AccountRole;
+import com.g4l.timesheet_backend.models.enums.AccountStatus;
 import com.g4l.timesheet_backend.models.requests.AuthRequest;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 
@@ -14,4 +15,7 @@ public interface AuthenticationService {
     public Object removeAccountType(String userId, AccountRole accountType);
     
     public Object viewAccountTypes(String userId);
+
+    public Object getAccountStatus(String userId);
+    public Object setAccountStatus(String userId, AccountStatus status);
 }

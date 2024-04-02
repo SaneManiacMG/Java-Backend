@@ -30,7 +30,6 @@ public class ManagerServiceImpl implements ManagerService {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    @SuppressWarnings("null")
     @Override
     public Object createManager(UserRequest userRequest) {
         if (userService.doesUserExist(userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail()))
@@ -49,7 +48,6 @@ public class ManagerServiceImpl implements ManagerService {
         }
     }
 
-    @SuppressWarnings("null")
     @Override
     public Object updateManager(UserRequest userRequest) {
         if (!userService.doesUserExist(userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail()))
