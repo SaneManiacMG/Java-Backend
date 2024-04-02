@@ -123,7 +123,7 @@ public class ClientServiceImpl implements ClientService {
 
         try {
             clientRepository.deleteById(clientId);
-            return "Client with userId " + clientId + " deleted";
+            return "Client with userId [" + clientId + "] deleted";
         } catch (Exception e) {
             return e;
         }
@@ -136,7 +136,7 @@ public class ClientServiceImpl implements ClientService {
 
         try {
             clientTeamRepository.deleteById(clientTeamId);
-            return "ClientTeam with userId " + clientTeamId + " deleted";
+            return "ClientTeam with userId [" + clientTeamId + "] deleted";
         } catch (Exception e) {
             return e;
         }
@@ -156,14 +156,11 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Object assignTeamToManager(String managerId, String teamId) {
-        if (getClientTeamById(teamId) == null)
-            throw new ClientDetailsNotFoundException(teamId);
+        getClientTeamById(teamId);
 
-        if (managerService.assignTeamToManager(managerId, teamId) == null) {
-            return null;
-        }
+        managerService.assignTeamToManager(managerId, teamId);
 
-        return "Manager with manager id " + managerId + " assigned to team with team id " + teamId;
+        return "Manager with manager id [" + managerId + "] assigned to team with team id [" + teamId + "]";
     }
 
     @Override
@@ -173,7 +170,7 @@ public class ClientServiceImpl implements ClientService {
 
         consultantService.assignConsultantToClientTeam(consultantId, teamId);
 
-        return "Consultant with consultant id " + consultantId + " assigned to team with team id " + teamId;
+        return "Consultant with consultant id [" + consultantId + "] assigned to team with team id [" + teamId + "]";
     }
 
     @Override

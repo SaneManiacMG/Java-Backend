@@ -104,11 +104,12 @@ public class ManagerServiceImpl implements ManagerService {
         Manager manager = managerRepository.findById(managerId)
                 .orElseThrow(() -> new UserDetailsNotFoundException(managerId));
 
-        Set<String> teams = new HashSet<>();
-        if (manager.getClientTeams() == null)
-            throw new ClientDetailsNotFoundException(teamId);
+        Set<String> teams = manager.getClientTeams();
 
-        teams = manager.getClientTeams();
+        if (teams == null) {
+            teams = new HashSet<>();
+        }
+
         teams.add(teamId);
 
         manager.setClientTeams(teams);
