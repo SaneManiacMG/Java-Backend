@@ -100,7 +100,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        if (!accountStatus.equals(AccountStatus.ACTIVE)) {
+        if (accountStatus.equals(AccountStatus.ACTIVE)) {
             return true;
         } else {
             return false;

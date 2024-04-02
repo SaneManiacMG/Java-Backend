@@ -4,7 +4,11 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
@@ -15,11 +19,15 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-    public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+    @Value("${application.security.secret}")
+    public String SECRET;
 
-    public String generateToken(Map<String, Object> claims, UserDetails userDetails) {
+    public String generateToken(Map<String, Object> claims, String userId) {
+        System.out.println("SECRET: " + SECRET);
+        System.out.println("claims: " + claims);
+        System.out.println("userDetails: " + userId);
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(userId)
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
@@ -27,7 +35,11 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        HashMap<String, Object> claims = new HashMap<>();
+        Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+        claims.put("Authorities", roles);
+        return generateToken(claims, userDetails.getUsername());
     }
 
     private Key getSignInKey() {
