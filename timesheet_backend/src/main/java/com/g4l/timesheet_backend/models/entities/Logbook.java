@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class Logbook {
     public Logbook(String id, Consultant consultant, Manager manager, int weekNumber, double monday, double tuesday,
             double wednesday, double thursday, double friday, double saturday, double sunday,
-            LogbookStatus status, String statusDescription) {
+            LogbookStatus status, String statusReason) {
         this.id = id;
         this.consultant = consultant;
         this.manager = manager;
@@ -33,7 +33,7 @@ public class Logbook {
         this.saturday = saturday;
         this.sunday = sunday;
         this.status = status;
-        this.statusDescription = statusDescription;
+        this.statusReason = statusReason;
         this.totalHours = this.monday + this.tuesday + this.wednesday + this.thursday + this.friday + this.saturday
                 + this.sunday;
     }
@@ -80,8 +80,8 @@ public class Logbook {
     @Column
     private LogbookStatus status;
 
-    @Column(name = "status_description")
-    private String statusDescription;
+    @Column(name = "status_reason")
+    private String statusReason;
 
     @Column(name = "date_created")
     private LocalDateTime dateCreated;

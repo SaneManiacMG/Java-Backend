@@ -124,15 +124,6 @@ public class LogbookServiceImpl implements LogbookService {
     @SuppressWarnings("null")
     @Override
     public List<LogbookResponse> getLogbooksByConsultantId(String consultantId) {
-        // List<Logbook> logbooks = logbookRepository.findLogbooksByConsultantId(consultantId);
-        // List<LogbookResponse> logbookResponses = null;
-
-        // for (Logbook logbook : logbooks) {
-        //     logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
-        // }
-
-        // return logbookResponses;
-
         return logbookRepository.findLogbooksByConsultantId(consultantId).stream()
                 .map(logbook -> logbookMapper.logbookToLogbookResponse(logbook)).toList();
     }
@@ -140,15 +131,6 @@ public class LogbookServiceImpl implements LogbookService {
     @SuppressWarnings("null")
     @Override
     public List<LogbookResponse> getLogbooksByManagerId(String managerId) {
-        // List<Logbook> logbooks = logbookRepository.findLogbooksByManagerId(managerId);
-        // List<LogbookResponse> logbookResponses = null;
-
-        // for (Logbook logbook : logbooks) {
-        //     logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
-        // }
-
-        // return logbookResponses;
-
         return logbookRepository.findLogbooksByManagerId(managerId).stream()
                 .map(logbook -> logbookMapper.logbookToLogbookResponse(logbook)).toList();
     }
@@ -159,6 +141,8 @@ public class LogbookServiceImpl implements LogbookService {
                 .orElseThrow(() -> new LogbookDetailsNotFoundException(logbookHandleRequest.logbookId));
 
         logbook.setStatus(logbookHandleRequest.status);
+        logbook.setStatusReason(logbookHandleRequest.statusReason);
+
         logbook.setDateModified(LocalDateTime.now());
 
         try {
