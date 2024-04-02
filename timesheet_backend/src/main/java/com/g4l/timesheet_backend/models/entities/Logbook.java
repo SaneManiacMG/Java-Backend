@@ -34,6 +34,8 @@ public class Logbook {
         this.sunday = sunday;
         this.status = status;
         this.statusDescription = statusDescription;
+        this.totalHours = this.monday + this.tuesday + this.wednesday + this.thursday + this.friday + this.saturday
+                + this.sunday;
     }
 
     @Id
@@ -86,4 +88,9 @@ public class Logbook {
 
     @Column(name = "date_modified")
     private LocalDateTime dateModified;
+
+    public void setTotalHours() {
+        this.totalHours = this.monday + this.tuesday + this.wednesday + this.thursday + this.friday + this.saturday
+                + this.sunday;
+    }
 }

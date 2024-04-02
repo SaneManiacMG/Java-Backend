@@ -58,6 +58,7 @@ public class LogbookServiceImpl implements LogbookService {
         logbook.setConsultant(consultant);
         logbook.setManager((Manager) managerService.getManagerById(clientTeam.getManagerId()));
         logbook.setStatus(LogbookStatus.PENDING);
+        logbook.setTotalHours();
         logbook.setDateCreated(LocalDateTime.now());
         logbook.setDateModified(LocalDateTime.now());
 
@@ -84,6 +85,7 @@ public class LogbookServiceImpl implements LogbookService {
         logbook.setSaturday(logbookSubmission.saturday);
         logbook.setSunday(logbookSubmission.sunday);
 
+        logbook.setTotalHours();
         logbook.setDateModified(LocalDateTime.now());
 
         try {
@@ -116,33 +118,39 @@ public class LogbookServiceImpl implements LogbookService {
             return e;
         }
 
-        return "Logbook with logbook id " + logbookId + " deleted";
+        return "Logbook with logbook id [" + logbookId + "] deleted";
     }
 
     @SuppressWarnings("null")
     @Override
     public List<LogbookResponse> getLogbooksByConsultantId(String consultantId) {
-        List<Logbook> logbooks = logbookRepository.findLogbooksByConsultantId(consultantId);
-        List<LogbookResponse> logbookResponses = null;
+        // List<Logbook> logbooks = logbookRepository.findLogbooksByConsultantId(consultantId);
+        // List<LogbookResponse> logbookResponses = null;
 
-        for (Logbook logbook : logbooks) {
-            logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
-        }
+        // for (Logbook logbook : logbooks) {
+        //     logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
+        // }
 
-        return logbookResponses;
+        // return logbookResponses;
+
+        return logbookRepository.findLogbooksByConsultantId(consultantId).stream()
+                .map(logbook -> logbookMapper.logbookToLogbookResponse(logbook)).toList();
     }
 
     @SuppressWarnings("null")
     @Override
     public List<LogbookResponse> getLogbooksByManagerId(String managerId) {
-        List<Logbook> logbooks = logbookRepository.findLogbooksByManagerId(managerId);
-        List<LogbookResponse> logbookResponses = null;
+        // List<Logbook> logbooks = logbookRepository.findLogbooksByManagerId(managerId);
+        // List<LogbookResponse> logbookResponses = null;
 
-        for (Logbook logbook : logbooks) {
-            logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
-        }
+        // for (Logbook logbook : logbooks) {
+        //     logbookResponses.add(logbookMapper.logbookToLogbookResponse(logbook));
+        // }
 
-        return logbookResponses;
+        // return logbookResponses;
+
+        return logbookRepository.findLogbooksByManagerId(managerId).stream()
+                .map(logbook -> logbookMapper.logbookToLogbookResponse(logbook)).toList();
     }
 
     @Override
