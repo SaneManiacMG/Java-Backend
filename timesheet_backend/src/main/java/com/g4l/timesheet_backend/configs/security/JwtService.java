@@ -20,17 +20,19 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
     @Value("${application.security.secret}")
-    public String SECRET;
+    private String SECRET;
+
+    @Value("${application.security.expiration}")
+    private Long EXPIRATION;
 
     public String generateToken(Map<String, Object> claims, String userId) {
-        System.out.println("SECRET: " + SECRET);
-        System.out.println("claims: " + claims);
-        System.out.println("userDetails: " + userId);
         return Jwts.builder()
+                .setHeaderParam("typ", "JWT")
                 .setSubject(userId)
-                .setClaims(claims)
+                .addClaims(claims)
+                .setIssuer("g4l_timesheet_backend")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
     }
 
@@ -38,7 +40,7 @@ public class JwtService {
         HashMap<String, Object> claims = new HashMap<>();
         Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
-        claims.put("Authorities", roles);
+        claims.put("roles", roles);
         return generateToken(claims, userDetails.getUsername());
     }
 
