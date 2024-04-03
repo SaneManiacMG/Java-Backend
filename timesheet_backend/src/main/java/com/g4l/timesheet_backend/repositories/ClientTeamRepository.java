@@ -7,5 +7,5 @@ import com.g4l.timesheet_backend.models.entities.ClientTeam;
 
 @Repository
 public interface ClientTeamRepository extends JpaRepository<ClientTeam, String> {
-    
+    public ClientTeam findByTeamName(String clientTeamName);
 }

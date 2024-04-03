@@ -6,4 +6,5 @@ public class LogbookHandleRequest {
     public String logbookId;
     public String managerId;
     public LogbookStatus status;
+    public String statusReason;
 }

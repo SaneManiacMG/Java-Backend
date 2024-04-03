@@ -1,26 +1,27 @@
-package com.g4l.timesheet_backend.services;
+package com.g4l.timesheet_backend.services.implementations;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.g4l.timesheet_backend.interfaces.UserService;
 import com.g4l.timesheet_backend.models.entities.Consultant;
 import com.g4l.timesheet_backend.models.entities.Manager;
-import com.g4l.timesheet_backend.models.entities.Role;
 import com.g4l.timesheet_backend.models.entities.User;
 import com.g4l.timesheet_backend.models.enums.AccountStatus;
-import com.g4l.timesheet_backend.models.enums.AccountType;
+import com.g4l.timesheet_backend.models.enums.AccountRole;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.repositories.ConsultantRepository;
 import com.g4l.timesheet_backend.repositories.ManagerRepository;
-import com.g4l.timesheet_backend.repositories.UserAuthoritiesRepository;
+import com.g4l.timesheet_backend.services.interfaces.UserService;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserIdDoesNotMatchPatternsException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +31,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final ConsultantRepository consultantRepository;
     private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserAuthoritiesRepository userAuthoritiesRepository;
+
+    @Value("${application.user.default.password}")
+    private String defaultPassword;
 
     public Object getUser(String userId) {
         // String cellPhoneNumberPattern = "^\\d{10}$";
@@ -50,7 +53,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return findByEmail(userId);
         }
 
-        return null;
+        throw new UserIdDoesNotMatchPatternsException(userId);
     }
 
     private Object findByEmail(String email) {
@@ -58,6 +61,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return consultantRepository.findByEmail(email);
         if (managerRepository.findByEmail(email) != null)
             return managerRepository.findByEmail(email);
+
         return null;
     }
 
@@ -66,6 +70,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return consultantRepository.findByUserName(username);
         if (managerRepository.findByUserName(username) != null)
             return managerRepository.findByUserName(username);
+
         return null;
     }
 
@@ -74,6 +79,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return consultantRepository.findByIdNumber(idNumber);
         if (managerRepository.findByIdNumber(idNumber) != null)
             return managerRepository.findByIdNumber(idNumber);
+
         return null;
     }
 
@@ -85,12 +91,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return getUser(idNumber);
         if (getUser(email) != null)
             return getUser(email);
+
         return null;
     }
 
     @Override
     public <T extends User> T updateUserDetails(T user, UserRequest request) {
-        user.setId(request.getIdNumber());
+        user.setIdNumber(request.getIdNumber());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
@@ -106,14 +113,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (user != null) {
             user.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
             user.setDateModified(LocalDateTime.now());
-    
-            return saveUser((User) user);
+
+            saveUser((User) user);
+            return "Password reset successfully";
         }
 
         if (getUser(passwordRequest.getUserId()) != null)
             return resetPassword(passwordRequest, (User) getUser(passwordRequest.getUserId()));
 
-        return null;
+        throw new UsernameNotFoundException(passwordRequest.getUserId());
     }
 
     @Override
@@ -121,9 +129,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = (User) getUser(passwordRequest.getUserId());
 
         if (user == null)
-            return null;
+            throw new UsernameNotFoundException(passwordRequest.getUserId());
 
-        if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword())) 
+        if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword()))
             return resetPassword(passwordRequest, user);
         else
             return "Password does not match current password";
@@ -136,47 +144,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (managerRepository.findByUserName(username) != null)
             return managerRepository.findByUserName(username);
 
-        throw new UsernameNotFoundException("User not found");
+        throw new UsernameNotFoundException("User not found for id [" + username + "]");
     }
 
     @Override
-    public Object addAccountType(String userId, AccountType accountType) {
-        Object user = getUser(userId);
-
-        if (user == null)
-            return null;
-
-        if (user instanceof Consultant) {
-            return updateAuthorities((Consultant) user, accountType, false);
+    public Object updateAuthorities(User user, AccountRole accountType, boolean remove) {
+        if (remove) {
+            user.getAccountRoles().remove(accountType);
+        } else {
+            user.getAccountRoles().add(accountType);
         }
 
-        if (user instanceof Manager) {
-            return updateAuthorities((Manager) user, accountType, false);
-        }
-
-        return null;
-    }
-
-    @Override
-    public Object removeAccountType(String userId, AccountType accountType) {
-        Object user = getUser(userId);
-
-        if (user != null)
-            return saveUser((User) user);
-
-        return null;
-    }
-
-    private User updateAuthorities(User user, AccountType accountType, boolean remove) {
-        Set<Role> authorities = (HashSet) user.getAuthorities();
-
-        if (remove)
-            authorities.remove(accountType);
-
-        user.setAuthorities(authorities);
         user.setDateModified(LocalDateTime.now());
 
-        return saveUser(user);
+        try {
+            return saveUser(user);
+        } catch (Exception e) {
+            return e;
+        }
     }
 
     @Override
@@ -184,7 +169,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Object user = getUser(userId);
 
         if (user == null)
-            return null;
+            throw new UserDetailsNotFoundException(userId);
 
         if (user instanceof Consultant) {
             return updateAccountStatus((Consultant) user, accountStatus);
@@ -194,46 +179,70 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return updateAccountStatus((Manager) user, accountStatus);
         }
 
-        return null;
+        throw new IllegalArgumentException("User type not supported");
     }
 
-    private User updateAccountStatus(User user, AccountStatus accountStatus) {
+    private Object updateAccountStatus(User user, AccountStatus accountStatus) {
         user.setAccountStatus(accountStatus);
         user.setDateModified(LocalDateTime.now());
 
-        saveUser(user);
-
-        return null;
+        try {
+            saveUser(user);
+            return "Account status for [" + user.getId() + "] updated successfully";
+        } catch (Exception e) {
+            return e;
+        }
     }
 
     private User saveUser(User user) {
         user.setDateModified(LocalDateTime.now());
 
         if (user instanceof Consultant) {
-            consultantRepository.save((Consultant) user);
-            return user;
+            Consultant consultant = (Consultant) user;
+            consultantRepository.save(consultant);
+            return consultant;
         }
 
         if (user instanceof Manager) {
-            managerRepository.save((Manager) user);
-            return user;
+            Manager manager = (Manager) user;
+            managerRepository.save(manager);
+            return manager;
         }
 
-        return null;
+        throw new IllegalArgumentException("User type not supported");
     }
 
     @Override
     public <T extends User> T createUser(T user) {
-        Set<Role> roles = new HashSet<>();
+        doesUserExist(user.getUserName(), user.getIdNumber(), user.getEmail());
 
+        Set<AccountRole> roles = new HashSet<>();
+        roles.add(AccountRole.UNVERIFIED);
+
+        user.setAccountRoles(roles);
         user.setAccountStatus(AccountStatus.UNVERIFIED);
         user.setDateCreated(LocalDateTime.now());
         user.setDateModified(LocalDateTime.now());
-        user.setPassword(passwordEncoder.encode("NOT_SET"));
-
-        roles.add(userAuthoritiesRepository.findByAuthority("ROLE_UNVERIFIED"));
-        user.setAuthorities(roles);
-
+        user.setPassword(passwordEncoder.encode(defaultPassword));
         return user;
     }
+
+    @Override
+    public boolean doesUserExist(String userName, String idNumber, String email) {
+        if (getUser(userName, idNumber, email) != null)
+            return true;
+        else
+            return false;
+    }
+
+    @Override
+    public Object getRoles(String userId) {
+        Object user = getUser(userId);
+
+        if (user == null)
+            return null;
+
+        return ((User) user).getAccountRoles();
+    }
+
 }

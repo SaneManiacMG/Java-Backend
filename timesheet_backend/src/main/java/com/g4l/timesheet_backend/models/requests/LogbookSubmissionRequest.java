@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class LogbookSubmissionRequest {
     public String consultantId;
-    public int week;
+    public int weekNumber;
     public int monday;
     public int tuesday;
     public int wednesday;
@@ -17,5 +17,4 @@ public class LogbookSubmissionRequest {
     public int friday;
     public int saturday;
     public int sunday;
-    public int totalHours;
 }

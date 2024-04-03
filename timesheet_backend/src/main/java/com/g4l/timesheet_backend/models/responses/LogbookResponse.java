@@ -12,15 +12,17 @@ import lombok.Setter;
 @Getter
 public class LogbookResponse extends LogbookSubmissionRequest {
     public LogbookStatus status;
-    public String statusDescription;
+    public String statusReason;
     public String managerId;
+    public int totalHours;
 
     public LogbookResponse(String consultantId, int week, int monday, int tuesday, int wednesday, int thursday,
-            int friday, int saturday, int sunday, int totalHours, LogbookStatus status, String statusDescription,
+            int friday, int saturday, int sunday, int totalHours, LogbookStatus status, String statusReason,
             String managerId) {
-        super(consultantId, week, monday, tuesday, wednesday, thursday, friday, saturday, sunday, totalHours);
+        super(consultantId, week, monday, tuesday, wednesday, thursday, friday, saturday, sunday);
         this.status = status;
-        this.statusDescription = statusDescription;
+        this.statusReason = statusReason;
         this.managerId = managerId;
+        this.totalHours = totalHours;
     }
 }

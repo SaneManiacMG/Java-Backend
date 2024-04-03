@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "managers")
 public class Manager extends User {
-    @Column
+    @Column(name = "client_teams")
     private Set<String> clientTeams;
 
     public Manager(String id, String idNumber, String firstName, String lastName, String userName, String email,

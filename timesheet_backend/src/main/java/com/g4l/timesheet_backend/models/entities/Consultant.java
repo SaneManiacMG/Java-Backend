@@ -13,7 +13,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "consultants")    
 public class Consultant extends User {
-    @Column
+    @Column(name = "client_team_id")
     private String clientTeamId;
 
     public Consultant(String idNumber, String firstName, String lastName, String userName, String email,

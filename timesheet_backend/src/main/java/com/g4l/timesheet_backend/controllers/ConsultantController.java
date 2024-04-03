@@ -1,62 +1,51 @@
 package com.g4l.timesheet_backend.controllers;
 
-import java.util.List;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.g4l.timesheet_backend.interfaces.ConsultantService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
-import com.g4l.timesheet_backend.models.responses.ConsultantResponse;
+import com.g4l.timesheet_backend.services.interfaces.ConsultantService;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsAlreadyExistsException;
+import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
+import com.g4l.timesheet_backend.utils.mappers.http.UserResponseMapper;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/consultants")
 public class ConsultantController {
-    
-    private ConsultantService consultantService;
-
-    public ConsultantController(ConsultantService consultantService) {
-        this.consultantService = consultantService;
-        
-    }
+    private final ConsultantService consultantService;
+    private final UserResponseMapper userResponseMapper;
 
     @PostMapping("/createConsultant")
-    public ConsultantResponse createConsultant(@RequestBody UserRequest userRequest) {
-        return consultantService.createConsultant(userRequest);
+    public ResponseEntity<?> createConsultant(@RequestBody UserRequest userRequest)
+            throws UserDetailsAlreadyExistsException {
+        return userResponseMapper.mapUserResponse(consultantService.createConsultant(userRequest));
     }
 
     @PutMapping("/updateConsultant")
-    public ConsultantResponse updateConsultant(@RequestBody UserRequest userRequest) {
-        return consultantService.updateConsultant(userRequest);
+    public ResponseEntity<?> updateConsultant(@RequestBody UserRequest userRequest)
+            throws UserDetailsNotFoundException {
+        return userResponseMapper.mapUserResponse(consultantService.updateConsultant(userRequest));
     }
 
     @GetMapping("/getConsultantById/{consultantId}")
-    public ConsultantResponse getConsultantById(@PathVariable String consultantId) {
-        return consultantService.getConsultantById(consultantId);
+    public ResponseEntity<?> getConsultantById(@PathVariable String consultantId) throws UserDetailsNotFoundException {
+        return userResponseMapper.mapUserResponse(consultantService.getConsultantById(consultantId));
     }
 
     @GetMapping("/getConsultant/{userId}")
-    public ConsultantResponse getConsultantByEmail(@PathVariable String userId) {
-        return consultantService.getConsultant(userId);
+    public ResponseEntity<?> getConsultantByEmail(@PathVariable String userId) throws UserDetailsNotFoundException {
+        return userResponseMapper.mapUserResponse(consultantService.getConsultant(userId));
     }
 
     @GetMapping("/getAllConsultants")
-    public List<ConsultantResponse> getAllConsultants() {
-        return consultantService.getAllConsultants();
+    public ResponseEntity<?> getAllConsultants() {
+        return new ResponseEntity<>(consultantService.getAllConsultants(), HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteConsultant/{consultantId}")
-    public String deleteConsultant(@PathVariable String consultantId) {
-        consultantService.deleteConsultant(consultantId);
-        return "Consultant deleted";
-    }
-
-    @PutMapping("/assignConsultantToClientTeam/{consultantId}/to/{clientTeamId}")
-    public ConsultantResponse assignConsultantToClientTeam(@PathVariable String consultantId, @PathVariable String clientTeamId) {
-        return consultantService.assignConsultantToClientTeam(consultantId, clientTeamId);
+    public ResponseEntity<?> deleteConsultant(@PathVariable String consultantId) throws UserDetailsNotFoundException {
+        return userResponseMapper.mapUserResponse(consultantService.deleteConsultant(consultantId));
     }
 }

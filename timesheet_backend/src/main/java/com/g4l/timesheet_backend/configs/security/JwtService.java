@@ -1,37 +1,53 @@
-package com.g4l.timesheet_backend.security;
+package com.g4l.timesheet_backend.configs.security;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
-@Component
+@Service
 public class JwtService {
-    public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
-    
-    public String generateToken(String userId) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userId);
-    }
+    @Value("${application.security.secret}")
+    private String SECRET;
 
-    public String createToken(Map<String, Object> claims, String userId) {
+    @Value("${application.security.expiration}")
+    private Long EXPIRATION;
+
+    @Value("${application.security.issuer}")
+    private String ISSUER;
+
+    public String generateToken(Map<String, Object> claims, String userId) {
         return Jwts.builder()
+                .setHeaderParam("typ", "JWT")
                 .setSubject(userId)
-                .setClaims(claims)
+                .addClaims(claims)
+                .setIssuer(ISSUER)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
     }
 
-    private Key getSignKey() {
+    public String generateToken(UserDetails userDetails) {
+        HashMap<String, Object> claims = new HashMap<>();
+        Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+        claims.put("roles", roles);
+        return generateToken(claims, userDetails.getUsername());
+    }
+
+    private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -52,7 +68,7 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
-                .setSigningKey(getSignKey())
+                .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -62,7 +78,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean isTokenValid(String token, UserDetails userDetails) {
         final String userId = extractUserId(token);
         return (userId.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }

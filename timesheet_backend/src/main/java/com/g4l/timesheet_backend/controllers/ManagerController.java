@@ -1,56 +1,53 @@
 package com.g4l.timesheet_backend.controllers;
 
-import java.util.List;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.g4l.timesheet_backend.interfaces.ManagerService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
-import com.g4l.timesheet_backend.models.responses.ManagerResponse;
+import com.g4l.timesheet_backend.services.interfaces.ManagerService;
+import com.g4l.timesheet_backend.utils.mappers.http.UserResponseMapper;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/managers")
 public class ManagerController {
-    
-    private ManagerService managerService;
-
-    public ManagerController(ManagerService managerService) {
-        this.managerService = managerService;
-        
-    }
+    private final ManagerService managerService;
+    private final UserResponseMapper userResponseMapper;
 
     @PostMapping("/createManager")
-    public ManagerResponse createManager(@RequestBody UserRequest userRequest) {
-        return managerService.createManager(userRequest);
+    public ResponseEntity<?> createManager(@RequestBody UserRequest userRequest) {
+        return userResponseMapper.mapUserResponse(managerService.createManager(userRequest));
     }
 
     @PutMapping("/updateManager")
-    public ManagerResponse updateManager(@RequestBody UserRequest userRequest) {
-        return managerService.updateManager(userRequest);
+    public ResponseEntity<?> updateManager(@RequestBody UserRequest userRequest) {
+        return userResponseMapper.mapUserResponse(managerService.updateManager(userRequest));
     }
 
     @GetMapping("/getManagerById/{managerId}")
-    public ManagerResponse getManagerById(@PathVariable String managerId) {
-        return managerService.getManagerById(managerId);
+    public ResponseEntity<?> getManagerById(@PathVariable String managerId) {
+        return userResponseMapper.mapUserResponse(managerService.getManagerById(managerId));
     }
 
-    @GetMapping("/getManager/{userId}")
-    public ManagerResponse getManagerByEmail(@PathVariable String userId) {
-        return managerService.getManager(userId);
+    @GetMapping("/getManagerByUserId/{userId}")
+    public ResponseEntity<?> getManagerByUserId(@PathVariable String userId) {
+        return userResponseMapper.mapUserResponse(managerService.getManager(userId));
     }
 
     @DeleteMapping("/deleteManager/{managerId}")
-    public String deleteManager(@PathVariable String managerId) {
-        return managerService.deleteManager(managerId);
+    public ResponseEntity<?> deleteManager(@PathVariable String managerId) {
+        return userResponseMapper.mapUserResponse(managerService.deleteManager(managerId));
     }
 
     @GetMapping("/getAllManagers")
-    public List<ManagerResponse> getAllManagers() {
-        return managerService.getAllManagers();
+    public ResponseEntity<?> getAllManagers() {
+        return new ResponseEntity<>(managerService.getAllManagers(), HttpStatus.OK);
     }
+
+    // @PutMapping("/assignTeamToManager")
+    // public ResponseEntity<?> assignTeamToManager(@RequestBody ClientTeamAssignment clientTeamAssignment) {
+    //     return logbookResponseMapper.mapLogbookResponse(managerService.assignTeamToManager(
+    //         clientTeamAssignment.getManagerId(), clientTeamAssignment.getTeamId()));
+    // }
 }
