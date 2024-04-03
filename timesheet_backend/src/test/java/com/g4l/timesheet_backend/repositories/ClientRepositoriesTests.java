@@ -15,7 +15,7 @@ import com.g4l.timesheet_backend.models.entities.ClientTeam;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class ClientRepositoryTest {
+public class ClientRepositoriesTests {
     @Autowired
     private ClientRepository clientRepository;
 
@@ -48,7 +48,7 @@ public class ClientRepositoryTest {
     }
 
     @Test
-    void findByClientNameTest_Exists() {
+    void testFindByClientName_Exists() {
         Client savedClient = clientRepository.findByClientName("Client1");
 
         assertNotNull(clientRepository.findByClientName("Client1"));
@@ -57,12 +57,12 @@ public class ClientRepositoryTest {
     }
 
     @Test
-    void findByClientNameTest_NotExists() {
+    void testFindByClientName_NotExists() {
         assertNull(clientRepository.findByClientName("NonExistentClient"));
     }
 
     @Test
-    void findByTeamNameTest_Exists() {
+    void testFindByTeamName_Exists() {
         ClientTeam savedClientTeam = clientTeamRepository.findByTeamName("Team1");
 
         assertNotNull(clientTeamRepository.findByTeamName("Team1"));
@@ -70,7 +70,20 @@ public class ClientRepositoryTest {
     }
 
     @Test
-    void findByTeamNameTest_NotExists() {
+    void testFindByTeamName_NotExists() {
         assertNull(clientTeamRepository.findByTeamName("NonExistentTeam"));
+    }
+
+    @Test
+    void testFindByManagerId_Exists() {
+        List<ClientTeam> savedClientTeams = clientTeamRepository.findByManagerId("1");
+
+        assertNotNull(clientTeamRepository.findByManagerId("1"));
+        assertEquals(savedClientTeams, clientTeamRepository.findByManagerId("1"));
+    }
+
+    @Test
+    void testFindByManagerId_NotExists() {
+        assertTrue(clientTeamRepository.findByManagerId("NonExistentManager").isEmpty());
     }
 }
