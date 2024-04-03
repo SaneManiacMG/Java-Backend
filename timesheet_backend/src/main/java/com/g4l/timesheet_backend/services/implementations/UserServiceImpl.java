@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 import com.g4l.timesheet_backend.models.requests.PasswordRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,6 +31,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final ConsultantRepository consultantRepository;
     private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${application.user.default.password}")
+    private String defaultPassword;
 
     public Object getUser(String userId) {
         // String cellPhoneNumberPattern = "^\\d{10}$";
@@ -57,7 +61,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return consultantRepository.findByEmail(email);
         if (managerRepository.findByEmail(email) != null)
             return managerRepository.findByEmail(email);
-        
+
         return null;
     }
 
@@ -66,7 +70,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return consultantRepository.findByUserName(username);
         if (managerRepository.findByUserName(username) != null)
             return managerRepository.findByUserName(username);
-        
+
         return null;
     }
 
@@ -219,7 +223,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setAccountStatus(AccountStatus.UNVERIFIED);
         user.setDateCreated(LocalDateTime.now());
         user.setDateModified(LocalDateTime.now());
-        user.setPassword(passwordEncoder.encode("NOT_SET"));
+        user.setPassword(passwordEncoder.encode(defaultPassword));
         return user;
     }
 
@@ -240,5 +244,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         return ((User) user).getAccountRoles();
     }
-    
+
 }

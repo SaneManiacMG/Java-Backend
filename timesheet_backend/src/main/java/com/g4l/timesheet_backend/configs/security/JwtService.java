@@ -25,12 +25,15 @@ public class JwtService {
     @Value("${application.security.expiration}")
     private Long EXPIRATION;
 
+    @Value("${application.security.issuer}")
+    private String ISSUER;
+
     public String generateToken(Map<String, Object> claims, String userId) {
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setSubject(userId)
                 .addClaims(claims)
-                .setIssuer("g4l_timesheet_backend")
+                .setIssuer(ISSUER)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();

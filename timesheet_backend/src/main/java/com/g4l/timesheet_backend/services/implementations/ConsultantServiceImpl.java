@@ -79,7 +79,7 @@ public class ConsultantServiceImpl implements ConsultantService {
 
         try {
             consultantRepository.deleteById(consultantId);
-            return "Consultant with consultant id " + consultantId + " deleted";
+            return "Consultant with consultant id [" + consultantId + "] deleted";
         } catch (Exception e) {
             return e;
         }
