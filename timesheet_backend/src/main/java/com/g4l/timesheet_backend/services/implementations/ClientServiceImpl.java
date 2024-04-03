@@ -188,4 +188,10 @@ public class ClientServiceImpl implements ClientService {
 
         return clientTeamRepository.findByTeamName(clientTeamName);
     }
+
+    @Override
+    public List<ClientTeamResponse> getClientTeamsByManager(String managerId) {
+        return clientTeamRepository.findByManagerId(managerId).stream()
+                .map(clientTeam -> clientMapper.clientTeamToClientTeamResponse(clientTeam)).toList();
+    }
 }

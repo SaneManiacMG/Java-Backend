@@ -75,4 +75,9 @@ public class ClientController {
     public ResponseEntity<?> assignConsultantToTeam(String consultantId, String teamId) {
         return clientResponseMapper.mapClientResponse(clientService.assignConsultantToTeam(consultantId, teamId));
     }
+
+    @GetMapping("/getClientTeamsByManagerId")
+    public ResponseEntity<?> getClientTeamsByManagerId(String managerId) {
+        return clientResponseMapper.mapClientResponse(clientService.getClientTeamsByManager(managerId));
+    }
 }

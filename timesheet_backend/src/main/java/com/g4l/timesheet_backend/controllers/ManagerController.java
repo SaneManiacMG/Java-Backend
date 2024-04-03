@@ -44,10 +44,4 @@ public class ManagerController {
     public ResponseEntity<?> getAllManagers() {
         return new ResponseEntity<>(managerService.getAllManagers(), HttpStatus.OK);
     }
-
-    // @PutMapping("/assignTeamToManager")
-    // public ResponseEntity<?> assignTeamToManager(@RequestBody ClientTeamAssignment clientTeamAssignment) {
-    //     return logbookResponseMapper.mapLogbookResponse(managerService.assignTeamToManager(
-    //         clientTeamAssignment.getManagerId(), clientTeamAssignment.getTeamId()));
-    // }
 }
