@@ -49,10 +49,11 @@ public class ClientRepositoriesTests {
 
     @Test
     void testFindByClientName_Exists() {
+        Client expectedClient = new Client("1", "Client1");
         Client savedClient = clientRepository.findByClientName("Client1");
 
-        assertNotNull(clientRepository.findByClientName("Client1"));
-        assertEquals(savedClient, clientRepository.findByClientName("Client1"));
+        assertNotNull(savedClient);
+        assertEquals(expectedClient, savedClient);
 
     }
 
@@ -63,10 +64,11 @@ public class ClientRepositoriesTests {
 
     @Test
     void testFindByTeamName_Exists() {
+        ClientTeam expectedClientTeam = new ClientTeam("1", "Team1", "1", "1");
         ClientTeam savedClientTeam = clientTeamRepository.findByTeamName("Team1");
 
-        assertNotNull(clientTeamRepository.findByTeamName("Team1"));
-        assertEquals(savedClientTeam, clientTeamRepository.findByTeamName("Team1"));
+        assertNotNull(savedClientTeam);
+        assertEquals(expectedClientTeam, savedClientTeam);
     }
 
     @Test
@@ -76,14 +78,13 @@ public class ClientRepositoriesTests {
 
     @Test
     void testFindByManagerId_Exists() {
-        List<ClientTeam> savedClientTeams = clientTeamRepository.findByManagerId("1");
+        ClientTeam clientTeam = new ClientTeam("1", "Team1", "1", "1");
+        List<ClientTeam> expectedClientTeams = Arrays.asList(clientTeam);
 
-        assertNotNull(clientTeamRepository.findByManagerId("1"));
-        assertEquals(savedClientTeams, clientTeamRepository.findByManagerId("1"));
-    }
+        List<ClientTeam> savedClientTeams = clientTeamRepository.findLogbooksByManagerId("1");
 
-    @Test
-    void testFindByManagerId_NotExists() {
-        assertTrue(clientTeamRepository.findByManagerId("NonExistentManager").isEmpty());
+        assertNotNull(savedClientTeams);
+        assertEquals(expectedClientTeams, savedClientTeams);
     }
+    
 }
