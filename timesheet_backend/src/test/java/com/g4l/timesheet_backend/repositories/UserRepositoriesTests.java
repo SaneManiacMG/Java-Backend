@@ -60,20 +60,29 @@ public class UserRepositoriesTests {
 
     @Test
     void testFindConsultantByEmail_Exists() {
+        Consultant expectedConsultant = new Consultant("id1", "idNumber1", "firstName1", "lastName1", "userName1",
+                "email1",
+                "phoneNumber1", "clientTeamId1");
         Consultant savedConsultant = consultantRepository.findByEmail("email1");
-        assertEquals(savedConsultant, consultantRepository.findByEmail("email1"));
+        assertEquals(expectedConsultant, savedConsultant);
     }
 
     @Test
     void testFindConsultantByUserName_Exists() {
+        Consultant expectedConsultant = new Consultant("id1", "idNumber1", "firstName1", "lastName1", "userName1",
+                "email1",
+                "phoneNumber1", "clientTeamId1");
         Consultant savedConsultant = consultantRepository.findByUserName("userName1");
-        assertEquals(savedConsultant, consultantRepository.findByUserName("userName1"));
+        assertEquals(expectedConsultant, savedConsultant);
     }
 
     @Test
     void testFindConsultantByIdNumber_Exists() {
+        Consultant expectedConsultant = new Consultant("id1", "idNumber1", "firstName1", "lastName1", "userName1",
+                "email1",
+                "phoneNumber1", "clientTeamId1");
         Consultant savedConsultant = consultantRepository.findByIdNumber("idNumber1");
-        assertEquals(savedConsultant, consultantRepository.findByIdNumber("idNumber1"));
+        assertEquals(expectedConsultant, savedConsultant);
     }
 
     @Test
@@ -93,20 +102,47 @@ public class UserRepositoriesTests {
 
     @Test
     void testFindManagerByEmail_Exists() {
+        Set<String> clientTeams = new HashSet<>();
+        clientTeams.add("clientTeam1");
+        clientTeams.add("clientTeam2");
+        clientTeams.add("clientTeam3");
+        clientTeams.add("clientTeam4");
+        clientTeams.add("clientTeam5");
+        Manager expectedManager = new Manager("id4", "idNumber4", "firstName4", "lastName4", "userName4", "email4",
+                "phoneNumber4", clientTeams);
+
         Manager savedManager = managerRepository.findByEmail("email4");
-        assertEquals(savedManager, managerRepository.findByEmail("email4"));
+        assertEquals(expectedManager, savedManager);
     }
 
     @Test
     void testFindManagerByUserName_Exists() {
+        Set<String> clientTeams = new HashSet<>();
+        clientTeams.add("clientTeam1");
+        clientTeams.add("clientTeam2");
+        clientTeams.add("clientTeam3");
+        clientTeams.add("clientTeam4");
+        clientTeams.add("clientTeam5");
+        Manager expectedManager = new Manager("id4", "idNumber4", "firstName4", "lastName4", "userName4", "email4",
+                "phoneNumber4", clientTeams);
+
         Manager savedManager = managerRepository.findByUserName("userName4");
-        assertEquals(savedManager, managerRepository.findByUserName("userName4"));
+        assertEquals(expectedManager, savedManager);
     }
 
     @Test
     void testFindManagerByIdNumber_Exists() {
+        Set<String> clientTeams = new HashSet<>();
+        clientTeams.add("clientTeam1");
+        clientTeams.add("clientTeam2");
+        clientTeams.add("clientTeam3");
+        clientTeams.add("clientTeam4");
+        clientTeams.add("clientTeam5");
+        Manager expectedManager = new Manager("id4", "idNumber4", "firstName4", "lastName4", "userName4", "email4",
+                "phoneNumber4", clientTeams);
+
         Manager savedManager = managerRepository.findByIdNumber("idNumber4");
-        assertEquals(savedManager, managerRepository.findByIdNumber("idNumber4"));
+        assertEquals(expectedManager, savedManager);
     }
 
     @Test
