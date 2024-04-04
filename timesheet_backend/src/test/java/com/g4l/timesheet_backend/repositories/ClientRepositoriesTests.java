@@ -22,22 +22,23 @@ public class ClientRepositoriesTests {
     @Autowired
     private ClientTeamRepository clientTeamRepository;
 
+    Client client1 = new Client("1", "Client1");
+    Client client2 = new Client("2", "Client2");
+    Client client3 = new Client("3", "Client3");
+    Client client4 = new Client("4", "Client4");
+    Client client5 = new Client("5", "Client5");
+    List<Client> clients = Arrays.asList(client1, client2, client3, client4, client5);
+
+    ClientTeam clientTeam1 = new ClientTeam("1", "Team1", "1", "1");
+    ClientTeam clientTeam2 = new ClientTeam("2", "Team2", "2", "2");
+    ClientTeam clientTeam3 = new ClientTeam("3", "Team3", "3", "3");
+    ClientTeam clientTeam4 = new ClientTeam("4", "Team4", "4", "4");
+    ClientTeam clientTeam5 = new ClientTeam("5", "Team5", "5", "5");
+    List<ClientTeam> clientTeams = Arrays.asList(clientTeam1, clientTeam2, clientTeam3, clientTeam4, clientTeam5);
+
     @BeforeEach
     void setUp() {
-        Client client1 = new Client("1", "Client1");
-        Client client2 = new Client("2", "Client2");
-        Client client3 = new Client("3", "Client3");
-        Client client4 = new Client("4", "Client4");
-        Client client5 = new Client("5", "Client5");
-        List<Client> clients = Arrays.asList(client1, client2, client3, client4, client5);
         clientRepository.saveAll(clients);
-
-        ClientTeam clientTeam1 = new ClientTeam("1", "Team1", "1", "1");
-        ClientTeam clientTeam2 = new ClientTeam("2", "Team2", "2", "2");
-        ClientTeam clientTeam3 = new ClientTeam("3", "Team3", "3", "3");
-        ClientTeam clientTeam4 = new ClientTeam("4", "Team4", "4", "4");
-        ClientTeam clientTeam5 = new ClientTeam("5", "Team5", "5", "5");
-        List<ClientTeam> clientTeams = Arrays.asList(clientTeam1, clientTeam2, clientTeam3, clientTeam4, clientTeam5);
         clientTeamRepository.saveAll(clientTeams);
     }
 
@@ -49,11 +50,10 @@ public class ClientRepositoriesTests {
 
     @Test
     void testFindByClientName_Exists() {
-        Client expectedClient = new Client("1", "Client1");
         Client savedClient = clientRepository.findByClientName("Client1");
 
         assertNotNull(savedClient);
-        assertEquals(expectedClient, savedClient);
+        assertEquals(client1, savedClient);
 
     }
 
@@ -64,11 +64,10 @@ public class ClientRepositoriesTests {
 
     @Test
     void testFindByTeamName_Exists() {
-        ClientTeam expectedClientTeam = new ClientTeam("1", "Team1", "1", "1");
         ClientTeam savedClientTeam = clientTeamRepository.findByTeamName("Team1");
 
         assertNotNull(savedClientTeam);
-        assertEquals(expectedClientTeam, savedClientTeam);
+        assertEquals(clientTeam1, savedClientTeam);
     }
 
     @Test
@@ -78,13 +77,12 @@ public class ClientRepositoriesTests {
 
     @Test
     void testFindByManagerId_Exists() {
-        ClientTeam clientTeam = new ClientTeam("1", "Team1", "1", "1");
-        List<ClientTeam> expectedClientTeams = Arrays.asList(clientTeam);
+        List<ClientTeam> expectedClientTeams = Arrays.asList(clientTeam1);
 
         List<ClientTeam> savedClientTeams = clientTeamRepository.findLogbooksByManagerId("1");
 
         assertNotNull(savedClientTeams);
         assertEquals(expectedClientTeams, savedClientTeams);
     }
-    
+
 }

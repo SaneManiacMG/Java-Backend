@@ -22,7 +22,6 @@ import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
 import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.exceptions.user.UserIdDoesNotMatchPatternsException;
-
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
