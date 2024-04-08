@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             user.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
             user.setDateModified(LocalDateTime.now());
 
-            saveUser((User) user);
+            saveUser(user);
             return "Password reset successfully";
         }
 
