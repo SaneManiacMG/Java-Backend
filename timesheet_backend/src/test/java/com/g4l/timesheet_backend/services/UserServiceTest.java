@@ -32,7 +32,7 @@ import com.g4l.timesheet_backend.services.implementations.UserServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 // @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class UserServiceTests {
+public class UserServiceTest {
     @Mock
     private ConsultantServiceImpl consultantService;
     @Mock

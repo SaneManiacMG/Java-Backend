@@ -17,7 +17,7 @@ import com.g4l.timesheet_backend.models.entities.Manager;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class UserRepositoriesTests {
+public class UserRepositoriesTest {
     @Autowired
     private ConsultantRepository consultantRepository;
 

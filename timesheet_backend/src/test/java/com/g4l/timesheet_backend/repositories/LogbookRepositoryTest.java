@@ -18,7 +18,7 @@ import com.g4l.timesheet_backend.models.enums.LogbookStatus;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class LogbookRepositoryTests {
+public class LogbookRepositoryTest {
     @Autowired
     private LogbookRepository logbookRepository;
 
