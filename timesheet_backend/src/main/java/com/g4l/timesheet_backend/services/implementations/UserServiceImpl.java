@@ -8,7 +8,6 @@ import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.models.entities.Consultant;
@@ -120,7 +119,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (getUser(passwordRequest.getUserId()) != null)
             return resetPassword(passwordRequest, (User) getUser(passwordRequest.getUserId()));
 
-        throw new UsernameNotFoundException(passwordRequest.getUserId());
+        throw new UserDetailsNotFoundException(passwordRequest.getUserId());
     }
 
     @Override
@@ -128,7 +127,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = (User) getUser(passwordRequest.getUserId());
 
         if (user == null)
-            throw new UsernameNotFoundException(passwordRequest.getUserId());
+            throw new UserDetailsNotFoundException(passwordRequest.getUserId());
 
         if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword()))
             return resetPassword(passwordRequest, user);
@@ -137,13 +136,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         if (consultantRepository.findByUserName(username) != null)
             return consultantRepository.findByUserName(username);
         if (managerRepository.findByUserName(username) != null)
             return managerRepository.findByUserName(username);
 
-        throw new UsernameNotFoundException("User not found for id [" + username + "]");
+        throw new UserDetailsNotFoundException("User not found for id [" + username + "]");
     }
 
     @Override
@@ -239,7 +238,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Object user = getUser(userId);
 
         if (user == null)
-            return null;
+            throw new UserDetailsNotFoundException(userId);
 
         return ((User) user).getAccountRoles();
     }
