@@ -26,7 +26,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final UserMapper userMapper;
 
     @Override
-    public Object createConsultant(UserRequest userRequest) throws UserDetailsAlreadyExistsException {
+    public Object createConsultant(UserRequest userRequest) {
         if (userService.doesUserExist(userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail()))
             throw new UserDetailsAlreadyExistsException(userRequest.getUserName(), userRequest.getIdNumber(),
                     userRequest.getEmail());
@@ -44,7 +44,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     @Override
-    public Object updateConsultant(UserRequest userRequest) throws UserDetailsNotFoundException {
+    public Object updateConsultant(UserRequest userRequest) {
         Consultant recordToUpdate = (Consultant) userService.getUser(
                 userRequest.getUserName(), userRequest.getIdNumber(), userRequest.getEmail());
 
@@ -62,18 +62,18 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     @Override
-    public Object getConsultantById(@NonNull String consultantId) throws UserDetailsNotFoundException {
+    public Object getConsultantById(@NonNull String consultantId) {
         return consultantRepository.findById(consultantId)
                 .orElseThrow(() -> new UserDetailsNotFoundException(consultantId));
     }
 
     @Override
-    public Consultant getConsultant(@NonNull String userId) throws UserDetailsNotFoundException {
+    public Consultant getConsultant(@NonNull String userId) {
         return consultantRepository.findById(userId).orElseThrow(() -> new UserDetailsNotFoundException(userId));
     }
 
     @Override
-    public Object deleteConsultant(@NonNull String consultantId) throws UserDetailsNotFoundException {
+    public Object deleteConsultant(@NonNull String consultantId) {
         if (consultantRepository.findById(consultantId).orElse(null) == null)
             throw new UserDetailsNotFoundException(consultantId);
 
@@ -92,8 +92,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     @Override
-    public Object assignConsultantToClientTeam(@NonNull String consultantId, @NonNull String clientTeamId)
-            throws UserDetailsNotFoundException {
+    public Object assignConsultantToClientTeam(@NonNull String consultantId, @NonNull String clientTeamId) {
         Consultant consultant = consultantRepository.findById(consultantId)
                 .orElseThrow(() -> new UserDetailsNotFoundException(consultantId));
 
