@@ -65,6 +65,7 @@ public class ConsultantServiceTest {
                 Object result = consultantService.createConsultant(userRequest);
 
                 assertNotNull(result);
+                assertTrue(result instanceof Consultant);
         }
 
         @Test
@@ -75,7 +76,8 @@ public class ConsultantServiceTest {
                 userRequest.setUserName("jake_doe");
 
                 assertThrows(UserDetailsAlreadyExistsException.class, () -> {
-                        throw new UserDetailsAlreadyExistsException(userRequest.getUserName(), userRequest.getIdNumber(),
+                        throw new UserDetailsAlreadyExistsException(userRequest.getUserName(),
+                                        userRequest.getIdNumber(),
                                         userRequest.getEmail());
                 });
         }
@@ -93,6 +95,7 @@ public class ConsultantServiceTest {
                 });
         }
 
+        @Test
         void testUpdateConsultant_Success() {
                 UserRequest userRequest = new UserRequest("1234567890001", "Jake", "Doe", "jake_doe",
                                 "jakedoe@mail.com",

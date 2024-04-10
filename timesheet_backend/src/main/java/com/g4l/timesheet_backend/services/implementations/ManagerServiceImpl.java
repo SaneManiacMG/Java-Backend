@@ -75,7 +75,7 @@ public class ManagerServiceImpl implements ManagerService {
         User user = (User) userService.getUser(managerId);
 
         managerRepository.deleteById(user.getId());
-        return "Manager with id: " + managerId + " has been deleted";
+        return "Manager with id [" + managerId + "] has been deleted";
     }
 
     @Override
