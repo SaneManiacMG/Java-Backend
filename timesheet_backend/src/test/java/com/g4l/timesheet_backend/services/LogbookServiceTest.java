@@ -231,6 +231,8 @@ public class LogbookServiceTest {
         Logbook logbook = new Logbook();
         logbook.setId("12345");
 
+        when(logbookRepository.findById("12345")).thenReturn(java.util.Optional.of(logbook));
+
         Object response = logbookService.deleteLogbook("12345");
 
         assertNotNull(response);

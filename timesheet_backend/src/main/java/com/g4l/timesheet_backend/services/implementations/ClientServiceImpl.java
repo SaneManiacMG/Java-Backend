@@ -33,8 +33,13 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Object createClient(String clientName) {
-        if (getClientByName(clientName) != null)
-            throw new ClientDetailsAlreadyExistsExcepion(clientName);
+       
+        try {
+            if (getClientByName(clientName) != null)
+                throw new ClientDetailsAlreadyExistsExcepion(clientName);
+        } catch (ClientDetailsNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
 
         Client client = new Client();
 
@@ -48,7 +53,6 @@ public class ClientServiceImpl implements ClientService {
         } catch (Exception e) {
             return e;
         }
-
     }
 
     @Override
