@@ -7,6 +7,7 @@ import com.g4l.timesheet_backend.services.interfaces.AuthenticationService;
 import com.g4l.timesheet_backend.utils.mappers.http.AuthenticationResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.g4l.timesheet_backend.models.requests.AuthRequest;
 
@@ -33,28 +34,33 @@ public class AuthController {
     }
 
     @PutMapping("/addAccountType/{accountType}/to/{userId}")
-    public ResponseEntity<?> addAccountType(@RequestParam String userId, @RequestParam AccountRole accountType) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
+    public ResponseEntity<?> addAccountType(@PathVariable String userId, @PathVariable AccountRole accountType) {
         return authenticationResponseMapper.mapAuthResponse(authenticationService.addAccountType(userId, accountType));
     }
 
     @PutMapping("/removeAccountType/{accountType}/from/{userId}")
-    public ResponseEntity<?> removeAccountType(@RequestParam String userId, @RequestParam AccountRole accountType) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
+    public ResponseEntity<?> removeAccountType(@PathVariable String userId, @PathVariable AccountRole accountType) {
         return authenticationResponseMapper
                 .mapAuthResponse(authenticationService.removeAccountType(userId, accountType));
     }
 
     @GetMapping("/viewAccountTypes/{userId}")
-    public ResponseEntity<?> viewAccountTypes(@RequestParam String userId) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
+    public ResponseEntity<?> viewAccountTypes(@PathVariable String userId) {
         return authenticationResponseMapper.mapAuthResponse(authenticationService.viewAccountTypes(userId));
     }
 
     @GetMapping("/getAccountStatus/{userId}")
-    public ResponseEntity<?> getAccountStatus(@RequestParam String userId) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
+    public ResponseEntity<?> getAccountStatus(@PathVariable String userId) {
         return authenticationResponseMapper.mapAuthResponse(authenticationService.getAccountStatus(userId));
     }
 
     @PutMapping("/setAccountStatus/{status}/for/{userId}")
-    public ResponseEntity<?> setAccountStatus(@RequestParam String userId, @RequestParam AccountStatus status) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
+    public ResponseEntity<?> setAccountStatus(@PathVariable String userId, @PathVariable AccountStatus status) {
         return authenticationResponseMapper.mapAuthResponse(authenticationService.setAccountStatus(userId, status));
     }
 }

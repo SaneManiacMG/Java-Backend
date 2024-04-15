@@ -137,10 +137,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        if (consultantRepository.findByUserName(username) != null)
-            return consultantRepository.findByUserName(username);
-        if (managerRepository.findByUserName(username) != null)
-            return managerRepository.findByUserName(username);
+        if (username.substring(0, 2).equals("CO"))
+            return consultantRepository.findById(username)
+                    .orElseThrow(() -> new UserDetailsNotFoundException("User not found for id [" + username + "]"));
+        if (username.substring(0, 2).equals("MA"))
+            return managerRepository.findById(username)
+                    .orElseThrow(() -> new UserDetailsNotFoundException("User not found for id [" + username + "]"));
 
         throw new UserDetailsNotFoundException("User not found for id [" + username + "]");
     }
