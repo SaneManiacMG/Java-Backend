@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (getUser(email) != null)
             return getUser(email);
 
-        return null;
+        throw new UserDetailsNotFoundException(username);
     }
 
     @Override
@@ -137,22 +137,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        if (username.substring(0, 2).equals("CO"))
-            return consultantRepository.findById(username)
-                    .orElseThrow(() -> new UserDetailsNotFoundException("User not found for id [" + username + "]"));
         if (username.substring(0, 2).equals("MA"))
-            return managerRepository.findById(username)
-                    .orElseThrow(() -> new UserDetailsNotFoundException("User not found for id [" + username + "]"));
+            return (UserDetails) managerRepository.findById(username)
+                    .orElseThrow(() -> new UserDetailsNotFoundException(username));
 
-        throw new UserDetailsNotFoundException("User not found for id [" + username + "]");
+        if (username.substring(0, 2).equals("CO"))
+            return (UserDetails) consultantRepository.findById(username)
+                    .orElseThrow(() -> new UserDetailsNotFoundException(username));
+        else
+            return (UserDetails) getUser(username);
     }
 
     @Override
-    public Object updateAuthorities(User user, AccountRole accountType, boolean remove) {
+    public Object updateAuthorities(User user, AccountRole accountRole, boolean remove) {
         if (remove) {
-            user.getAccountRoles().remove(accountType);
+            user.getAccountRoles().remove(accountRole);
         } else {
-            user.getAccountRoles().add(accountType);
+            user.getAccountRoles().add(accountRole);
         }
 
         user.setDateModified(LocalDateTime.now());
@@ -214,8 +215,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public <T extends User> T createUser(T user) {
-        doesUserExist(user.getUserName(), user.getIdNumber(), user.getEmail());
-
         Set<AccountRole> roles = new HashSet<>();
         roles.add(AccountRole.UNVERIFIED);
 
@@ -229,10 +228,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public boolean doesUserExist(String userName, String idNumber, String email) {
-        if (getUser(userName, idNumber, email) != null)
+        try {
+            getUser(userName, idNumber, email);
             return true;
-        else
+        } catch (Exception e) {
             return false;
+        }
+
     }
 
     @Override
