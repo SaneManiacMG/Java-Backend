@@ -69,12 +69,17 @@ public class ConsultantServiceImpl implements ConsultantService {
 
     @Override
     public Consultant getConsultant(@NonNull String userId) {
-        return consultantRepository.findById(userId).orElseThrow(() -> new UserDetailsNotFoundException(userId));
+        Consultant consultant = (Consultant) userService.getUser(userId);
+
+        if (consultant == null)
+            throw new UserDetailsNotFoundException(userId);
+
+        return consultant;
     }
 
     @Override
     public Object deleteConsultant(@NonNull String consultantId) {
-        if (consultantRepository.findById(consultantId).orElse(null) == null)
+        if (!userService.doesUserExist(consultantId, consultantId, consultantId))
             throw new UserDetailsNotFoundException(consultantId);
 
         try {
