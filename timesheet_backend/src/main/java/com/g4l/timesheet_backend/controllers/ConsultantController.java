@@ -19,24 +19,27 @@ public class ConsultantController {
     private final UserResponseMapper userResponseMapper;
 
     @PostMapping("/createConsultant")
+    @PreAuthorize("hasAnyRole('DEV', 'ADMIN')")
     public ResponseEntity<?> createConsultant(@RequestBody UserRequest userRequest)
             throws UserDetailsAlreadyExistsException {
         return userResponseMapper.mapUserResponse(consultantService.createConsultant(userRequest));
     }
 
     @PutMapping("/updateConsultant")
+    @PreAuthorize("hasAnyRole('CONSULTANT', 'DEV', 'ADMIN')")
     public ResponseEntity<?> updateConsultant(@RequestBody UserRequest userRequest)
             throws UserDetailsNotFoundException {
         return userResponseMapper.mapUserResponse(consultantService.updateConsultant(userRequest));
     }
 
     @GetMapping("/getConsultantById/{consultantId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
+    @PreAuthorize("hasAnyRole('CONSULTANT', 'DEV', 'ADMIN')")
     public ResponseEntity<?> getConsultantById(@PathVariable String consultantId) {
         return userResponseMapper.mapUserResponse(consultantService.getConsultantById(consultantId));
     }
 
     @GetMapping("/getConsultant/{userId}")
+    @PreAuthorize("hasAnyRole('CONSULTANT', 'DEV', 'ADMIN')")
     public ResponseEntity<?> getConsultantByEmail(@PathVariable String userId) {
         return userResponseMapper.mapUserResponse(consultantService.getConsultant(userId));
     }

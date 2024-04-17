@@ -36,7 +36,7 @@ public class ClientController {
     }
 
     @GetMapping("/getClientById/{clientId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
+    @PreAuthorize("hasAnyRole('CONSULTANT', 'DEV', 'ADMIN')")
     public ResponseEntity<?> getClientById(@PathVariable String clientId) {
         return clientResponseMapper.mapClientResponse(clientService.getClientById(clientId));
     }
@@ -66,7 +66,7 @@ public class ClientController {
     }
 
     @GetMapping("/getClientTeamById/{clientTeamId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
+    @PreAuthorize("hasAnyRole('CONSULTANT', 'DEV', 'ADMIN')")
     public ResponseEntity<?> getClientTeamById(@PathVariable String clientTeamId) {
         return clientResponseMapper.mapClientResponse(clientService.getClientTeamById(clientTeamId));
     }

@@ -17,16 +17,19 @@ public class LogbookController {
     private final LogbookResponseMapper logbookResponseMapper;
 
     @PostMapping("/createLogbook")
+    @PreAuthorize("hasAnyRole('CONSULTANT', 'DEV')")
     public ResponseEntity<?> createLogbook(@RequestBody LogbookSubmissionRequest logbook) {
         return logbookResponseMapper.mapLogbookResponse(logbookService.createLogbook(logbook));
     }
 
     @GetMapping("/getLogbook/{logbookId}")
+    @PreAuthorize("hasAnyRole('CONSULTANT', 'DEV', 'ADMIN')")
     public ResponseEntity<?> getLogbookById(@PathVariable String logbookId) {
         return logbookResponseMapper.mapLogbookResponse(logbookService.getLogbookById(logbookId));
     }
 
     @GetMapping("/getLogbooksByConsultantId/{consultantId}")
+    @PreAuthorize("hasAnyRole('CONSULTANT', 'DEV', 'ADMIN')")
     public ResponseEntity<?> getLogbooksByConsultantId(@PathVariable String consultantId) {
         return logbookResponseMapper.mapLogbookResponse(logbookService.getLogbooksByConsultantId(consultantId));
     }
@@ -38,6 +41,7 @@ public class LogbookController {
     }
 
     @PutMapping("/updateLogbook")
+    @PreAuthorize("hasAnyRole('CONSULTANT', 'DEV')")
     public ResponseEntity<?> updateLogbook(@RequestBody LogbookSubmissionRequest logbookRequest) {
         return logbookResponseMapper.mapLogbookResponse(logbookService.updateLogbook(logbookRequest));
     }

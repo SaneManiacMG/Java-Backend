@@ -29,6 +29,7 @@ public class AuthController {
     }
 
     @PutMapping("/changePassword")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV', 'CONSULTANT')")
     public ResponseEntity<?> changePassword(@RequestBody PasswordRequest passwordRequest) {
         return authenticationResponseMapper.mapAuthResponse(authenticationService.changePassword(passwordRequest));
     }
@@ -47,13 +48,13 @@ public class AuthController {
     }
 
     @GetMapping("/viewAccountTypes/{userId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV', 'CONSULTANT')")
     public ResponseEntity<?> viewAccountTypes(@PathVariable String userId) {
         return authenticationResponseMapper.mapAuthResponse(authenticationService.viewAccountTypes(userId));
     }
 
     @GetMapping("/getAccountStatus/{userId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV', 'CONSULTANT')")
     public ResponseEntity<?> getAccountStatus(@PathVariable String userId) {
         return authenticationResponseMapper.mapAuthResponse(authenticationService.getAccountStatus(userId));
     }
