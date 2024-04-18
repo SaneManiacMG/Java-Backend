@@ -13,14 +13,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ManagerResponse extends UserRequest {
-    public String clientTeamId;
+    public String id;
+    public Set<String> clientTeams;
     public Set<AccountRole> accountRoles;
     public AccountStatus accountStatus;
 
-    public ManagerResponse(String idNumber, String firstName, String lastName, String userName, String email,
-            String phoneNumber, String id, String clientTeamId, Set<AccountRole> accountRoles, AccountStatus accountStatus) {
+    public ManagerResponse(String id, String idNumber, String firstName, String lastName, String userName, String email,
+            String phoneNumber, Set<String> clientTeams, Set<AccountRole> accountRoles, AccountStatus accountStatus) {
         super(idNumber, firstName, lastName, userName, email, phoneNumber);
-        this.clientTeamId = clientTeamId;
+        this.id = id;
+        this.clientTeams = clientTeams;
         this.accountRoles = accountRoles;
         this.accountStatus = accountStatus;
     }

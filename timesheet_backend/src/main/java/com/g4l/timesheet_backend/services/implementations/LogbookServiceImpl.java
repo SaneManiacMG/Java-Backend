@@ -112,6 +112,8 @@ public class LogbookServiceImpl implements LogbookService {
 
     @Override
     public Object deleteLogbook(@NonNull String logbookId) {
+        getLogbookById(logbookId);
+
         try {
             logbookRepository.deleteById(logbookId);
         } catch (Exception e) {

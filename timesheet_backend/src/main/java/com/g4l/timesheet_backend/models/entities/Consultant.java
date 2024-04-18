@@ -16,8 +16,8 @@ public class Consultant extends User {
     @Column(name = "client_team_id")
     private String clientTeamId;
 
-    public Consultant(String idNumber, String firstName, String lastName, String userName, String email,
-            String phoneNumber, String id, String clientTeamId) {
+    public Consultant(String id, String idNumber, String firstName, String lastName, String userName, String email,
+            String phoneNumber, String clientTeamId) {
         super(id, idNumber, firstName, lastName, userName, email, phoneNumber);
         this.clientTeamId = clientTeamId;
     }

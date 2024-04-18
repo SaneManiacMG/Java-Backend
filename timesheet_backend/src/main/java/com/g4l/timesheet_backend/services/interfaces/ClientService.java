@@ -30,4 +30,6 @@ public interface ClientService {
     
     public Object assignTeamToManager(String managerId, String teamId);
     public Object assignConsultantToTeam(String consultantId, String teamId);
+
+    public List<ClientTeamResponse> getClientTeamsByManager(String managerId);
 }

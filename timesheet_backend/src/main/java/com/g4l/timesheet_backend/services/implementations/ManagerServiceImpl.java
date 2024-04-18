@@ -1,12 +1,10 @@
 package com.g4l.timesheet_backend.services.implementations;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.springframework.stereotype.Service;
-import com.g4l.timesheet_backend.models.entities.ClientTeam;
 import com.g4l.timesheet_backend.models.entities.Manager;
 import com.g4l.timesheet_backend.models.entities.User;
 import com.g4l.timesheet_backend.models.enums.SequenceType;
@@ -16,7 +14,6 @@ import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.services.interfaces.ManagerService;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
 import com.g4l.timesheet_backend.utils.SequenceGenerator;
-import com.g4l.timesheet_backend.utils.exceptions.client.ClientDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsAlreadyExistsException;
 import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.mappers.models.UserMapper;
@@ -78,7 +75,7 @@ public class ManagerServiceImpl implements ManagerService {
         User user = (User) userService.getUser(managerId);
 
         managerRepository.deleteById(user.getId());
-        return "Manager with id: " + managerId + " has been deleted";
+        return "Manager with id [" + managerId + "] has been deleted";
     }
 
     @Override
@@ -119,22 +116,4 @@ public class ManagerServiceImpl implements ManagerService {
             return e;
         }
     }
-
-    @Override
-    public List<ClientTeam> getManagedTeams(@NonNull String managerId) {
-        Manager manager = managerRepository.findById(managerId)
-                .orElseThrow(() -> new UserDetailsNotFoundException(managerId));
-
-        List<ClientTeam> clientTeams = new ArrayList<>();
-
-        if (manager.getClientTeams() == null)
-            throw new ClientDetailsNotFoundException(managerId);
-
-        for (String teamId : manager.getClientTeams()) {
-            clientTeams.add((ClientTeam) userService.getUser(teamId));
-        }
-
-        return clientTeams;
-    }
-
 }
