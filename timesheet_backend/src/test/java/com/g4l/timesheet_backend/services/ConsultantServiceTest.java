@@ -131,7 +131,7 @@ public class ConsultantServiceTest {
 
         @Test
         void testDeleteConsultant_Seccess() {
-                when(consultantRepository.findById(Mockito.anyString())).thenReturn(Optional.of(con1));
+                when(userService.doesUserExist(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
 
                 Object result = consultantService.deleteConsultant("id1");
 
@@ -160,9 +160,9 @@ public class ConsultantServiceTest {
 
         @Test
         void testGetConsultant_Success() {
-                when(consultantRepository.findById(Mockito.anyString())).thenReturn(Optional.of(con1));
+                when(userService.getUser(Mockito.anyString())).thenReturn(con1);
 
-                Consultant result = consultantService.getConsultant("id1");
+                Consultant result = consultantService.getConsultant("john_doe");
 
                 assertNotNull(result);
         }
