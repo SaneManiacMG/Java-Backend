@@ -8,7 +8,6 @@ import com.g4l.timesheet_backend.models.requests.PasswordRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.g4l.timesheet_backend.models.entities.Consultant;
@@ -22,7 +21,6 @@ import com.g4l.timesheet_backend.repositories.ManagerRepository;
 import com.g4l.timesheet_backend.services.interfaces.UserService;
 import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.exceptions.user.UserIdDoesNotMatchPatternsException;
-
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -92,7 +90,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (getUser(email) != null)
             return getUser(email);
 
-        return null;
+        throw new UserDetailsNotFoundException(username);
     }
 
     @Override
@@ -114,14 +112,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             user.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
             user.setDateModified(LocalDateTime.now());
 
-            saveUser((User) user);
+            saveUser(user);
             return "Password reset successfully";
         }
 
         if (getUser(passwordRequest.getUserId()) != null)
             return resetPassword(passwordRequest, (User) getUser(passwordRequest.getUserId()));
 
-        throw new UsernameNotFoundException(passwordRequest.getUserId());
+        throw new UserDetailsNotFoundException(passwordRequest.getUserId());
     }
 
     @Override
@@ -129,7 +127,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = (User) getUser(passwordRequest.getUserId());
 
         if (user == null)
-            throw new UsernameNotFoundException(passwordRequest.getUserId());
+            throw new UserDetailsNotFoundException(passwordRequest.getUserId());
 
         if (passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword()))
             return resetPassword(passwordRequest, user);
@@ -138,21 +136,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (consultantRepository.findByUserName(username) != null)
-            return consultantRepository.findByUserName(username);
-        if (managerRepository.findByUserName(username) != null)
-            return managerRepository.findByUserName(username);
+    public UserDetails loadUserByUsername(String username) {
+        if (username.substring(0, 2).equals("MA"))
+            return (UserDetails) managerRepository.findById(username)
+                    .orElseThrow(() -> new UserDetailsNotFoundException(username));
 
-        throw new UsernameNotFoundException("User not found for id [" + username + "]");
+        if (username.substring(0, 2).equals("CO"))
+            return (UserDetails) consultantRepository.findById(username)
+                    .orElseThrow(() -> new UserDetailsNotFoundException(username));
+        else
+            return (UserDetails) getUser(username);
     }
 
     @Override
-    public Object updateAuthorities(User user, AccountRole accountType, boolean remove) {
+    public Object updateAuthorities(User user, AccountRole accountRole, boolean remove) {
         if (remove) {
-            user.getAccountRoles().remove(accountType);
+            user.getAccountRoles().remove(accountRole);
         } else {
-            user.getAccountRoles().add(accountType);
+            user.getAccountRoles().add(accountRole);
         }
 
         user.setDateModified(LocalDateTime.now());
@@ -214,8 +215,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public <T extends User> T createUser(T user) {
-        doesUserExist(user.getUserName(), user.getIdNumber(), user.getEmail());
-
         Set<AccountRole> roles = new HashSet<>();
         roles.add(AccountRole.UNVERIFIED);
 
@@ -229,10 +228,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public boolean doesUserExist(String userName, String idNumber, String email) {
-        if (getUser(userName, idNumber, email) != null)
+        try {
+            getUser(userName, idNumber, email);
             return true;
-        else
+        } catch (Exception e) {
             return false;
+        }
+
     }
 
     @Override
@@ -240,7 +242,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Object user = getUser(userId);
 
         if (user == null)
-            return null;
+            throw new UserDetailsNotFoundException(userId);
 
         return ((User) user).getAccountRoles();
     }

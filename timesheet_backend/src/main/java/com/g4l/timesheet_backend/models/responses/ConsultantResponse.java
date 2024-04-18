@@ -12,13 +12,15 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ConsultantResponse extends UserRequest {
+    public String id;
     public String clientTeamId;
     public Set<AccountRole> accountRoles;
     public AccountStatus accountStatus;
 
-    public ConsultantResponse(String idNumber, String firstName, String lastName, String userName, String email,
-            String phoneNumber, String id, String clientTeamId, Set<AccountRole> accountRoles, AccountStatus accountStatus) {
+    public ConsultantResponse(String id, String idNumber, String firstName, String lastName, String userName, String email,
+            String phoneNumber, String clientTeamId, Set<AccountRole> accountRoles, AccountStatus accountStatus) {
         super(idNumber, firstName, lastName, userName, email, phoneNumber);
+        this.id = id;
         this.clientTeamId = clientTeamId;
         this.accountRoles = accountRoles;
         this.accountStatus = accountStatus;
