@@ -198,7 +198,6 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public List<ClientTeamResponse> getClientTeamsByManager(String managerId) {
-        // TODO: client details via manager not working
         return clientTeamRepository.findLogbooksByManagerId(managerId).stream()
                 .map(clientTeam -> clientMapper.clientTeamToClientTeamResponse(clientTeam)).toList();
     }
