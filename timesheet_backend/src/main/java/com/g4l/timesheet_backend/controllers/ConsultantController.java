@@ -6,8 +6,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.g4l.timesheet_backend.models.requests.UserRequest;
 import com.g4l.timesheet_backend.services.interfaces.ConsultantService;
-import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsAlreadyExistsException;
-import com.g4l.timesheet_backend.utils.exceptions.user.UserDetailsNotFoundException;
 import com.g4l.timesheet_backend.utils.mappers.http.UserResponseMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -20,15 +18,13 @@ public class ConsultantController {
 
     @PostMapping("/createConsultant")
     @PreAuthorize("hasAnyRole('DEV', 'ADMIN')")
-    public ResponseEntity<?> createConsultant(@RequestBody UserRequest userRequest)
-            throws UserDetailsAlreadyExistsException {
+    public ResponseEntity<?> createConsultant(@RequestBody UserRequest userRequest) {
         return userResponseMapper.mapUserResponse(consultantService.createConsultant(userRequest));
     }
 
     @PutMapping("/updateConsultant")
     @PreAuthorize("hasAnyRole('CONSULTANT', 'DEV', 'ADMIN')")
-    public ResponseEntity<?> updateConsultant(@RequestBody UserRequest userRequest)
-            throws UserDetailsNotFoundException {
+    public ResponseEntity<?> updateConsultant(@RequestBody UserRequest userRequest) {
         return userResponseMapper.mapUserResponse(consultantService.updateConsultant(userRequest));
     }
 
