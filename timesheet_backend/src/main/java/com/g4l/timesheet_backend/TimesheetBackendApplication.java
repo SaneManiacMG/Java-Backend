@@ -9,5 +9,4 @@ public class TimesheetBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TimesheetBackendApplication.class, args);
 	}
-
 }
